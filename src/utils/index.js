@@ -373,13 +373,24 @@ const Utils = {
     }
   },
   /**
-   * 弹出页面loading
+   * 弹出页面loading   仅针对 vant
    * @param that 调用方的this对象
    * @param isopen 是打开还是关闭 true：打开 false：关闭
+   * @param msg 提示语句
    * */
-  loading: function(that, isopen) {
+  loading: function(that, isopen, msg) {
     if (that) {
-      that.$store.dispatch("setLoading", isopen);
+      if (isopen) {
+        msg = msg ? msg : "加载中...";
+        that.$toast.loading({
+          mask: false,
+          message: msg,
+          forbidClick: false,
+          duration: 0
+        });
+      } else {
+        that.$toast.clear();
+      }
     } else {
       throw new Error("that 为必填参数");
     }

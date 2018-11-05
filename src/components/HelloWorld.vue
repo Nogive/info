@@ -2,6 +2,8 @@
   <div class="example">
     <van-button type="primary"  plain @click="takePhoto">测试拍照</van-button>
     <van-button type="primary"  plain @click="getGPS">测试GPS</van-button>
+    <van-button @click="show">show</van-button>
+    <van-button @click="hide">hide</van-button>
   </div>
 </template>
 
@@ -30,6 +32,12 @@ export default {
     },
     getGPS(){
       console.log('获取GPS');
+    },
+    show(){
+      this.Utils.loading(this,true,'请求中');
+    },
+    hide(){
+      this.Utils.loading(this,false);
     }
   }
 }
