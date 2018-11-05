@@ -359,19 +359,6 @@ const Utils = {
       return 0;
     }
   },
-
-  /**
-   * 接口错误弹窗
-   * @param  that 调用方的this对象 必填
-   * @param  error 接口错误信息 选填
-   */
-  error: function(that, error) {
-    if (that) {
-      that.$store.dispatch("setError", error);
-    } else {
-      throw new Error("that 为必填参数");
-    }
-  },
   /**
    * 弹出页面loading   仅针对 vant
    * @param that 调用方的this对象

@@ -28,7 +28,7 @@ export function callApi(params) {
     if (!params.data) {
       params.data = {};
     }
-    params.data["userId"] = 000000;
+    params.data["userId"] = "000000";
 
     let configData = {
       method: params.type ? params.type : "POST",
