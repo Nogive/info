@@ -1,5 +1,5 @@
 import md5 from "js-md5";
-
+import axios from "axios";
 /**
  * h5 本地数据的操作类
  * */
@@ -523,6 +523,113 @@ const Utils = {
     var type = Object.prototype.toString;
 
     return type.call(str) == "[object Undefined]" ? "" : str;
+  },
+  /**
+   * 动态增加script
+   * @param url script地址
+   * @param callback 增加完成后的回调
+   * @returns *
+   */
+  createScript(url, callback) {
+    var oScript = document.createElement("script");
+    oScript.type = "text/javascript";
+    oScript.async = true;
+    oScript.src = url;
+    /* 
+    ** script标签的onload和onreadystatechange事件 
+    ** IE6/7/8支持onreadystatechange事件 
+    ** IE9/10支持onreadystatechange和onload事件 
+    ** Firefox/Chrome/Opera支持onload事件 
+    */
+
+    // 判断IE8及以下浏览器
+    var isIE = !-[1];
+    if (isIE) {
+      alert("IE");
+      oScript.onreadystatechange = function() {
+        if (this.readyState == "loaded" || this.readyState == "complete") {
+          callback();
+        }
+      };
+    } else {
+      // IE9及以上浏览器，Firefox，Chrome，Opera
+      oScript.onload = function() {
+        callback();
+      };
+    }
+    document.body.appendChild(oScript);
+  },
+  /**
+   * 判断obj对象是否为空
+   * @method isEmptyObject
+   * @param { * } obj 需要判断的对象
+   * @remind 如果判断的对象是NULL， 将直接返回true， 如果是数组且为空， 返回true， 如果是字符串， 且字符串为空，
+   *          返回true， 如果是普通对象， 且该对象没有任何实例属性， 返回true
+   * @return { Boolean } 对象是否为空
+   */
+  isEmptyObject: function(obj) {
+    if (obj == null) return true;
+    if (this.isArray(obj) || this.isString(obj)) return obj.length === 0;
+    for (var key in obj) if (obj.hasOwnProperty(key)) return false;
+    return true;
+  },
+  /**
+   * 克隆对象
+   * @method clone
+   * @param { Object } source 源对象
+   * @return { Object } source的一个副本
+   */
+
+  /**
+   * 深度克隆对象，将source的属性克隆到target对象， 会覆盖target重名的属性。
+   * @method clone
+   * @param { Object } source 源对象
+   * @param { Object } target 目标对象
+   * @return { Object } 附加了source对象所有属性的target对象
+   */
+  clone: function(source, target) {
+    var tmp;
+    target = target || {};
+    for (var i in source) {
+      if (source.hasOwnProperty(i)) {
+        tmp = source[i];
+        if (typeof tmp == "object") {
+          target[i] = utils.isArray(tmp) ? [] : {};
+          utils.clone(source[i], target[i]);
+        } else {
+          target[i] = tmp;
+        }
+      }
+    }
+    return target;
+  },
+  /**
+   * 删除字符串str的首尾空格
+   * @method trim
+   * @param { String } str 需要删除首尾空格的字符串
+   * @return { String } 删除了首尾的空格后的字符串
+   */
+  trim: function(str) {
+    return str.replace(/(^[ \t\n\r]+)|([ \t\n\r]+$)/g, "");
+  },
+  /**
+   * 从服务器（m.tmall）上获取时间
+   * @method getTimeFromServer
+   * @return date 对象
+   */
+  getTimeFromServer: function() {
+    return new Promise((resolve, reject) => {
+      axios.head("http://m.tmall.com").then(
+        res => {
+          let data = { date: new Date(res.headers.date), from: "OL" };
+          resolve(data);
+        },
+        err => {
+          let data = { date: new Date(), from: "LT" };
+          resolve(data);
+        }
+      );
+    });
   }
 };
 export default Utils;

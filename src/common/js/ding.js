@@ -1,4 +1,4 @@
-import { getParameterByName, getFullUrl } from "./utils";
+import Utils from "@/utils";
 /**
  * 获取ding code
  * @example corpId=ding7bc2e52b22faf4b2
@@ -7,11 +7,9 @@ import { getParameterByName, getFullUrl } from "./utils";
 export function requestAuthCode() {
   return new Promise((resolve, reject) => {
     dd.runtime.permission.requestAuthCode({
-      corpId: getParameterByName("corpId"),
+      corpId: Utils.getParameterByName("corpId"),
       onSuccess: function(result) {
         resolve(result.code);
-        //Vue.prototype.dingCode = result.code;
-        //requestConfig();
       },
       onFail: function(err) {
         reject(err);

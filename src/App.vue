@@ -6,12 +6,12 @@
 </template>
 
 <script>
-import { getParameterByName, getFullUrl } from "@/common/js/utils";
 import { requestAuthCode } from "@/common/js/ding";
 export default {
   name: 'App',
   created(){
     console.log(this.Utils);
+    console.log(this.constants);
     this._initEnvironment();
   },
   methods:{
@@ -40,7 +40,7 @@ export default {
     login(code){
       let _this=this;
       this.axios
-      .post("/api/ding/sso", { corpId: getParameterByName("corpId"),code:code })
+      .post("/api/ding/sso", { corpId: _this.Utils.getParameterByName("corpId"),code:code })
       .then(function(response) {
         console.log("login");
         console.log(response);
@@ -53,8 +53,9 @@ export default {
       });
     },
     questJsApiConfigAndSet(){
+      let _this=this;
       this.axios
-      .get("/api/ding/config", { params: { url: getFullUrl() } })
+      .get("/api/ding/config", { params: { url: _this.Utils.getFullUrl() } })
       .then(function(response) {
         console.log("config");
         console.log(response);

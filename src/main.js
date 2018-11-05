@@ -2,8 +2,12 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import App from "./App";
 import router from "./router";
+
 import Utils from "./utils";
 Vue.prototype.Utils = Utils;
+
+import constants from "./common/js/constant";
+Vue.prototype.constants = constants;
 
 import axios from "axios";
 import qs from "qs";
