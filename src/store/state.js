@@ -1,5 +1,4 @@
 const state = {
-  isLoading: false,
-  errorMessage: ""
+  isLoading: false
 };
 export default state;
