@@ -383,6 +383,18 @@ const Utils = {
     }
   },
   /**
+   * 接口错误弹窗  仅针对vant
+   * @param  that 调用方的this对象 必填
+   * @param  error 接口错误信息 选填
+   */
+  error: function(that, error) {
+    if (that) {
+      that.$toast(error);
+    } else {
+      throw new Error("that 为必填参数");
+    }
+  },
+  /**
    * 统一获取页面显示值的方法，统一处理了返回值避免页面显示出现有问题的信息
    * */
   val: function() {
