@@ -5,8 +5,17 @@ export default new Router({
   routes: [
     {
       path: "/",
-      name: "HelloWorld",
-      component: () => import("@/components/HelloWorld")
+      redirect: "/home"
+    },
+    {
+      path: "/home",
+      name: "home",
+      component: () => import("@/pages/home/home")
+    },
+    {
+      path: "/test",
+      name: "test",
+      component: () => import("@/components/test")
     }
   ]
 });
