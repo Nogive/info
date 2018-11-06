@@ -9,30 +9,6 @@ Vue.prototype.Utils = Utils;
 import constants from "./common/js/constant";
 Vue.prototype.constants = constants;
 
-import axios from "axios";
-import qs from "qs";
-axios.interceptors.request.use(
-  function(config) {
-    //具体操作
-    return config;
-  },
-  function(error) {
-    return Promise.reject(error);
-  }
-);
-axios.interceptors.response.use(
-  function(response) {
-    response = response.data;
-    return response;
-  },
-  function(error) {
-    store.dispatch("hideLoading");
-    return Promise.reject(error);
-  }
-);
-Vue.prototype.$qs = qs;
-Vue.prototype.axios = axios;
-
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */

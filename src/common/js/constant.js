@@ -8,15 +8,6 @@ const constants = {
     deviceType_web: "WEB",
     deviceType_ding_android: "DING_ANDROID",
     deviceType_ding_ios: "DING_IOS"
-  },
-  apiCode: {
-    ok: 200,
-    noAuth: 401,
-    noPermission: 403,
-    error: 400,
-    notFound: 404,
-    internalError: 500,
-    serverError: 502
   }
 };
 export default constants;

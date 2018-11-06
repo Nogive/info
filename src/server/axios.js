@@ -1,6 +1,17 @@
 import Qs from "qs";
 import axios from "axios";
-import Utils from "../utils";
+import Utils from "@/utils";
+
+const apiCode = {
+  ok: 200,
+  success: 0,
+  noAuth: 401,
+  noPermission: 403,
+  error: 400,
+  notFound: 404,
+  internalError: 500,
+  serverError: 502
+};
 
 /**
  * 网络请求业务接口
@@ -64,21 +75,30 @@ export function callApi(params) {
         if (isload) {
           Utils.loading(params.that, false);
         }
-        if (response.status === 200) {
-          if (Utils.val(response.data, 0, "result") > 0) {
-            if (params.success) {
-              params.success(response.data.data, response.data);
-            }
-          } else {
-            let error = new Error(
-              Utils.val(response.data, "系统错误!", "message")
-            );
-            error.response = response.data;
+        if (response.status === apiCode.ok) {
+          if (Utils.isEmptyObject(response.data)) {
+            let error = new Error("无法从服务端获取数据，请联系管理员！");
             throw error;
+          } else if (params.success) {
+            params.success(response.data);
           }
+        } else if (response.status === apiCode.noAuth) {
+          let error = new Error("身份验证已经失效，请重新登录！");
+          error.response = { code: response.status, data: response.data };
+          throw error;
+        } else if (response.status === apiCode.noPermission) {
+          let error = new Error("抱歉！您没有权限访问，请联系管理员。");
+          error.response = { code: response.status, data: response.data };
+          throw error;
+        } else if (response.status === apiCode.error) {
+          //判断是否有具体的错误原因并做相应的处理
+
+          let error = new Error("抱歉！您没有权限访问，请联系管理员。");
+          error.response = { code: response.status, data: response.data };
+          throw error;
         } else {
-          let error = new Error(response.statusText + " " + response.status);
-          error.response = response.data;
+          let error = new Error("发生网络错误！");
+          error.response = { code: response.status, data: response.data };
           throw error;
         }
       })

@@ -7,11 +7,10 @@
 
 <script>
 import { requestAuthCode } from "@/common/js/ding";
+import {callApi} from "@/server/axios";
 export default {
   name: 'App',
   created(){
-    //console.log(this.Utils);
-    //console.log(this.constants);
     this._initEnvironment();
   },
   methods:{
@@ -39,17 +38,16 @@ export default {
     },
     login(code){
       let _this=this;
-      this.axios
-      .post("/api/ding/sso", { corpId: _this.Utils.getParameterByName("corpId"),code:code })
-      .then(function(response) {
-        console.log("login");
-        console.log(response);
-        //设置请求头
-        this.axios.defaults.headers.common['Authorization']=response.token;
-        _this.questJsApiConfigAndSet();
-      })
-      .catch(function(error) {
-        console.error(error);
+      callApi({
+        that:this,
+        url:"/api/ding/sso",
+        data:{corpId: _this.Utils.getParameterByName("corpId"),code:code},
+        success:function(data){
+          console.log("login");
+          console.log(data);
+          _this.questJsApiConfigAndSet();
+          //token存入session
+        }
       });
     },
     questJsApiConfigAndSet(){
