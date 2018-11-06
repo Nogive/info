@@ -10,6 +10,8 @@
 <script>
 import { uploadImageFromCamera} from "@/common/js/ding";
 import {callApi} from "@/server/axios";
+import {account} from "@/server/api";
+
 export default {
   name: 'HelloWorld',
   data () {
@@ -37,7 +39,7 @@ export default {
     testAxios(){
       callApi({
         that:this,
-        url:"http://x.waiqin.co/api/captcha",
+        url:account.getCaptchaImage,
         type:"GET",
         success:function(data){
           console.log(data);
