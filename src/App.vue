@@ -6,16 +6,17 @@
 
 <script>
 import { requestAuthCode } from "@/common/js/ding";
-import {callApi} from "@/server/axios";
+import {XFieldApi,ddApi,formatParameter,setAuth,callApi} from "@/server/swagger";
+console.log(XFieldApi);
 export default {
   name: 'App',
   created(){
+    this.Utils.openVconsole();
     this._initEnvironment();
   },
   methods:{
     _initEnvironment(){
-      //判断当前处于什么环境
-      this._initDingTalk();//钉钉
+      this._initDingTalk();
       this._dingError();
     },
     _initDingTalk(){
@@ -37,34 +38,31 @@ export default {
     },
     login(code){
       let _this=this;
-      callApi({
-        that:this,
-        url:"/api/ding/sso",
-        data:{corpId: _this.Utils.getParameterByName("corpId"),code:code},
-        success:function(data){
-          console.log("login");
-          console.log(data);
-          _this.questJsApiConfigAndSet();
-          //token存入session
-        }
-      });
+      let maskBody={corpId: _this.Utils.getParameterByName("corpId"),code:code};
+      let body=formatParameter("DingSsoRequest",maskBody);
+      //console.log(body);
+      callApi(ddApi,"sso",body).then(res=>{
+        console.log(res);
+        //_this.questJsApiConfigAndSet();
+      },err=>{
+        console.log(err);
+      })
     },
     questJsApiConfigAndSet(){
       let _this=this;
-      this.axios
-      .get("/api/ding/config", { params: { url: _this.Utils.getFullUrl() } })
-      .then(function(response) {
-        console.log("config");
-        console.log(response);
-        let config = response.data;
-        config.jsApiList = ["biz.util.uploadImageFromCamera","device.geolocation.get"];
-        dd.config(config);
+      let url=this.Utils.getFullUrl();
+      ddApi.config(url,(error,data,response)=>{
+        if(error){
+          console.log(error)
+        }else{
+          console.log(data);
+          console.log(res);
+          // let config = data;
+          // config.jsApiList = ["biz.util.uploadImageFromCamera","device.geolocation.get"];
+          // dd.config(config);
+        }
       })
-      .catch(function(error) {
-        console.error(error);
-      });
-    },
-    
+    }
   }
 }
 </script>

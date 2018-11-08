@@ -4,6 +4,7 @@
     <van-button type="primary"  plain @click="getGPS">测试GPS</van-button>
     <van-button @click="testAxios">testAxios</van-button>
     <van-button @click="computeDix">计算距离</van-button>
+    <van-button @click="openVconsole">openVconsole</van-button>
   </div>
 </template>
 
@@ -55,6 +56,15 @@ export default {
     computeDix(){
       var distance = this.Utils.calculateDistance(121.662158,31.141832,121.809787,31.143007);
       console.log(distance);
+    },
+    openVconsole(){
+      let url =
+        "http://maimang-public.oss-cn-hangzhou.aliyuncs.com/vconsole.min.js";
+      this.Utils.createScript(url, function() {
+        var vConsole = new VConsole();
+        Vue.prototype.vConsole=vConsole;
+        console.log("aaaaa");
+      });
     }
   }
 }
