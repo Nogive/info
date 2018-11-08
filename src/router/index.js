@@ -13,6 +13,14 @@ export default new Router({
       component: () => import("@/pages/home/home")
     },
     {
+      path: "/sell_point/:mode",
+      name: "sell_point",
+      component: () => import("@/pages/sell_point/sell_point"),
+      meta: {
+        title: ["售点信息", "售点拜访"]
+      }
+    },
+    {
       path: "/test",
       name: "test",
       component: () => import("@/components/test")

@@ -8,6 +8,12 @@ const constants = {
     deviceType_web: "WEB",
     deviceType_ding_android: "DING_ANDROID",
     deviceType_ding_ios: "DING_IOS"
+  },
+  pages: {
+    mode: {
+      info: 0,
+      visit: 1
+    }
   }
 };
 export default constants;

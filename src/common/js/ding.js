@@ -44,3 +44,45 @@ export function uploadImageFromCamera(watermark) {
     });
   });
 }
+
+/**
+ * 获取当前位置信息
+ * 
+ * @return result {}
+ * @example result:{
+      longitude : Number,
+      latitude : Number,
+      accuracy : Number,
+      address : String,
+      province : String,
+      city : String,
+      district : String,
+      road : String,
+      netType : String,
+      operatorType : String,
+      errorMessage : String,
+      errorCode : Number,
+      isWifiEnabled : Boolean,
+      isGpsEnabled : Boolean,
+      isFromMock : Boolean,
+      provider : wifi|lbs|gps,
+      accuracy : Number,
+      isMobileEnabled : Boolean
+    }
+ */
+export function getLocation() {
+  return new Promise((resolve, reject) => {
+    dd.device.geolocation.get({
+      targetAccuracy: 100, //精度
+      coordinate: 1, //高德坐标
+      withReGeocode: false, //是否带有逆地理编码信息
+      useCache: true, //是否缓存地理位置信息 默认是true，如果需要频繁获取地理位置，请设置false
+      onSuccess: function(result) {
+        resolve(result);
+      },
+      onFail: function(err) {
+        reject(err);
+      }
+    });
+  });
+}

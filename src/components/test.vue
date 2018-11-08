@@ -3,21 +3,22 @@
     <van-button type="primary"  plain @click="takePhoto">测试拍照</van-button>
     <van-button type="primary"  plain @click="getGPS">测试GPS</van-button>
     <van-button @click="testAxios">testAxios</van-button>
-    <van-button @click="show">show</van-button>
+    <van-button @click="computeDix">计算距离</van-button>
   </div>
 </template>
 
 <script>
-import { uploadImageFromCamera} from "@/common/js/ding";
+import { uploadImageFromCamera,getLocation} from "@/common/js/ding";
 import {callApi} from "@/server/axios";
 import {account} from "@/server/api";
-
 export default {
   name: 'HelloWorld',
   data () {
     return {
      
     }
+  },
+  mounted(){
   },
   methods:{
     takePhoto(){
@@ -35,6 +36,11 @@ export default {
     },
     getGPS(){
       console.log('获取GPS');
+      getLocation().then(res=>{
+        console.log(res);
+      },err=>{
+        console.error(err);
+      })
     },
     testAxios(){
       callApi({
@@ -46,8 +52,9 @@ export default {
         }
       })
     },
-    show(){
-      this.Utils.loading(this,true);
+    computeDix(){
+      var distance = this.Utils.calculateDistance(121.662158,31.141832,121.809787,31.143007);
+      console.log(distance);
     }
   }
 }

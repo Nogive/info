@@ -1,9 +1,9 @@
 <template>
   <div class="pos">
     <div class="pos-wrapper clearfix">
-      <van-row>
+      <van-row class="mb10">
         <van-col span="6">
-          <router-link to="/">
+          <router-link :to="'/sell_point/'+mode.info">
             <i class="iconfont red">&#xe61b;</i>
             <h5 class="title">售点信息</h5>
           </router-link>
@@ -24,6 +24,14 @@
           <router-link to="/">
             <i class="iconfont blue">&#xe616;</i>
             <h5 class="title">销货统计</h5>
+          </router-link>
+        </van-col>
+      </van-row>
+      <van-row class="mb10">
+        <van-col span="6">
+          <router-link :to="'/sell_point/'+mode.visit">
+            <i class="iconfont red">&#xe60a;</i>
+            <h5 class="title">售点拜访</h5>
           </router-link>
         </van-col>
       </van-row>
@@ -50,6 +58,8 @@
     border-1px(rgba(7,17,27,.1))
     &:last-child
       border-none()
+    .mb10
+      margin-bottom 0.5rem
     .iconfont
       font-size 1.5rem
       &.red
@@ -64,12 +74,16 @@
       font-size .5rem
 </style>
 <script>
+import constants from "@/common/js/constant.js"
 export default {
   name:'home',
   data(){
     return {
 
     }
+  },
+  created(){
+    this.mode=constants.pages.mode;
   }
 }
 </script>

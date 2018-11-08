@@ -57,7 +57,7 @@ export default {
         console.log("config");
         console.log(response);
         let config = response.data;
-        config.jsApiList = ["biz.util.uploadImageFromCamera"];
+        config.jsApiList = ["biz.util.uploadImageFromCamera","device.geolocation.get"];
         dd.config(config);
       })
       .catch(function(error) {

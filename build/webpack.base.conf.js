@@ -83,6 +83,8 @@ module.exports = {
     child_process: "empty"
   },
   externals: {
-    vue: "Vue"
+    vue: "Vue",
+    AMap: "window.AMap",
+    AMapUI: "window.AMapUI"
   }
 };
