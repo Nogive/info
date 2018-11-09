@@ -5,9 +5,9 @@
 </template>
 
 <script>
+import tools from "@/common/js/tool"
 import { requestAuthCode } from "@/common/js/ding";
-import {XFieldApi,ddApi,formatParameter,setAuth,callApi} from "@/server/swagger";
-console.log(XFieldApi);
+import {ddApi,callApi,custom} from "@/server/swagger";
 export default {
   name: 'App',
   created(){
@@ -23,8 +23,7 @@ export default {
       let _this=this;
       dd.ready(function() {
         requestAuthCode().then(res=>{
-          console.log("dd ready");
-          console.log(res);
+          console.log("dd ready:",res);
           _this.login(res);
         }).catch(err=>{
           console.log(err)
@@ -38,28 +37,34 @@ export default {
     },
     login(code){
       let _this=this;
-      let maskBody={corpId: _this.Utils.getParameterByName("corpId"),code:code};
-      let body=formatParameter("DingSsoRequest",maskBody);
-      //console.log(body);
-      callApi(ddApi,"sso",body).then(res=>{
-        console.log(res);
-        //_this.questJsApiConfigAndSet();
+      let params={corpId: _this.Utils.getParameterByName("corpId"),code:code};
+      callApi(ddApi,"dingGetuserinfo",params).then(res=>{
+        console.log("dingGetuserinfo:",res);
+        custom.setAuth(res.token);
+        _this.Utils.Local.set('user',res.user);
+        _this.Utils.Local.set('token',res.token);
+        _this.questJsApiConfigAndSet();
       },err=>{
-        console.log(err);
+        if(err.body){
+          console.log("errorBody:",err.body);
+        }else{
+          tools.dealError(_this,err);
+        }
       })
     },
     questJsApiConfigAndSet(){
       let _this=this;
       let url=this.Utils.getFullUrl();
-      ddApi.config(url,(error,data,response)=>{
-        if(error){
-          console.log(error)
+      callApi(ddApi,'dingConfig',url).then(res=>{
+        console.log("dingConfig_res",res);
+        let config = res;
+        config.jsApiList = ["biz.util.uploadImageFromCamera","device.geolocation.get"];
+        dd.config(config);
+      },err=>{
+        if(err.body){
+          console.log("errorBody:",err.body);
         }else{
-          console.log(data);
-          console.log(res);
-          // let config = data;
-          // config.jsApiList = ["biz.util.uploadImageFromCamera","device.geolocation.get"];
-          // dd.config(config);
+          tools.dealError(_this,err);
         }
       })
     }

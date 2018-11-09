@@ -665,14 +665,24 @@ const Utils = {
     let end = this.initLngLat(lng2, lat2);
     return Math.round(start.distance(end));
   },
+  /**
+   * 打开vconsole
+   * @method openVconsole
+   */
   openVconsole: function() {
     let url =
       "http://maimang-public.oss-cn-hangzhou.aliyuncs.com/vconsole.min.js";
     this.createScript(url, function() {
       var vConsole = new VConsole();
       Vue.prototype.vConsole = vConsole;
-      console.log("aaaaa");
     });
+  },
+  closeVConsole: function(that) {
+    if (that) {
+      that.vConsole.destroy();
+    } else {
+      throw new Error("that为必填参数");
+    }
   }
 };
 export default Utils;
