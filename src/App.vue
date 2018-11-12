@@ -11,7 +11,7 @@ import {ddApi,callApi,custom} from "@/server/swagger";
 export default {
   name: 'App',
   created(){
-    this.Utils.openVconsole();
+    //this.Utils.openVconsole();
     this._initEnvironment();
   },
   methods:{

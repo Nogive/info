@@ -134,6 +134,7 @@
 <script>
 import axios from "axios";
 import _get from "lodash-es/get";
+import _cloneDeep from 'lodash-es/cloneDeep';
 import ncformCommon from '@ncform/ncform-common'
 
 export default {
@@ -192,6 +193,13 @@ export default {
         res=true;
       }
       return res;
+    },
+    otherParams() {
+      let otherParams = _cloneDeep(_get(this.mergeConfig, 'enumSourceRemote.otherParams'), {});
+      for (let key in otherParams) {
+        otherParams[key] = this._analyzeVal(otherParams[key]);
+      }
+      return otherParams;
     }
   },
   watch:{
@@ -216,6 +224,18 @@ export default {
         this.inputText="";
       }
       this.modelVal=this.endVal;
+    },
+    otherParams(newVal, oldVal) {
+      if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        if (oldVal !== undefined) { // 非第一次
+          if (Array.isArray(this.modelVal)) {
+            this.modelVal = [];
+          } else {
+            this.modelVal = null;
+          }
+        }
+        this.remoteMethod();
+      }
     }
   },
   methods: {
@@ -253,7 +273,7 @@ export default {
       //设置请求头
       if(this.mergeConfig.enumSourceRemote.withAuthorization){
         options.headers={
-          'Authorization': 'Bearer ' + JSON.parse(window.localStorage.getItem('token')),
+          'Authentication': JSON.parse(window.localStorage.getItem('token')),
         }
       }
       options.params[
