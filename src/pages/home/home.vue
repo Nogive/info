@@ -44,6 +44,12 @@
             <h5 class="title">测试</h5>
           </router-link>
         </van-col>
+        <van-col span="6">
+          <router-link to="/form">
+            <i class="iconfont">&#xe68c;</i>
+            <h5 class="title">ncform</h5>
+          </router-link>
+        </van-col>
       </van-row>
     </div>
   </div>

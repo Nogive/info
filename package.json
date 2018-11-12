@@ -10,6 +10,8 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@ncform/ncform": "^0.1.21",
+    "@ncform/ncform-common": "^0.1.12",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

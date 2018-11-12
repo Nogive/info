@@ -1,3 +1,7 @@
+/**其他页面要使用API
+ *  import {accountApi,callApi,custom} from "@server/swagger"
+ * @example callApi(ddApi,'dingGetuserinfo',params).then(res=>{},err=>{})
+ */
 const XFieldApi = require("x_field_api");
 /*---------------------API--------------------------------------------- */
 //ddApi
@@ -28,7 +32,13 @@ export var custom = {
   },
   errorCode: XFieldApi.Error.CodeEnum
 };
-//调API的方法封装
+/**
+ * 调用API
+ * @param apiInstance  api对象 如：accountApi
+ * @param api 方法名
+ * @param param  调用api要提供的参数  非必填
+ * @return promise对象
+ */
 export function callApi(apiInstance, api, param) {
   return new Promise((resolve, reject) => {
     if (param) {
