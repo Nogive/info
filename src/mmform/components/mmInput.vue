@@ -1,6 +1,5 @@
 <template>
   <div class="space" v-show="!hidden">
-    {{readonly}}
     <van-cell-group>
       <van-field 
         :disabled="disabled"
