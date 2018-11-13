@@ -1,6 +1,6 @@
 <template>
   <div class="space" v-show="!hidden">
-    <!-- <label>{{mergeConfig.msg}}</label> -->
+    {{readonly}}
     <van-cell-group>
       <van-field 
         :disabled="disabled"
@@ -35,6 +35,8 @@ export default {
         placeholder:'请输入内容'
       },
     }
+  },
+  created(){
   },
   computed:{
     leftIcon:function(){

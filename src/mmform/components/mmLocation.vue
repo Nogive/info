@@ -17,14 +17,14 @@
       <div class="addr-text">
         <van-row gutter=5>
           <van-col :span="21" class="search-box">
-            <input class="text" type="text" v-model="address" id="address" :readonly="!mergeConfig.drag">
+            <input class="text" type="text" v-model="address" id="address" :readonly="!drag">
             <ul class="tip" v-show="startSearch">
               <li class="tip-item" v-for="(item,index) in tipRes" :key="index" @click.stop.prevent="selectRes(item)">{{item.name}}</li>
             </ul>
           </van-col>
           <van-col :span="3">
             <div class="icon-btns">
-              <van-icon v-if="mergeConfig.drag" class="icon" name="search" @click="onSearch"></van-icon>
+              <van-icon v-if="drag" class="icon" name="search" @click="onSearch"></van-icon>
               <van-icon v-else class="icon" name="location" @click="onLocation"></van-icon>
             </div>
           </van-col>
@@ -33,7 +33,7 @@
       <div class="map-content">
         <div class="drag-map">
           <div id="mapContainer" class="mapmap"></div>
-          <van-icon v-if="mergeConfig.drag" name="location" class="location-btn" @click.stop="onLocation"></van-icon>
+          <van-icon v-if="drag" name="location" class="location-btn" @click.stop="onLocation"></van-icon>
         </div>
       </div>
     </van-popup>
@@ -62,7 +62,7 @@ export default {
   },
   mounted(){
     this.address=this.value.address;
-    this.center=this.value.center;
+    this.center=[this.value.lng,this.value.lat];
     this._initMap();
   },
   watch:{
@@ -83,6 +83,9 @@ export default {
       }else{
         return "location"
       }
+    },
+    drag(){
+      return this._analyzeVal(this.config.drag);
     }
   },
   methods: {
@@ -94,7 +97,7 @@ export default {
       map = new AMap.Map('mapContainer', {
         center: this.center,
         zoom: 15,
-        dragEnable:this.mergeConfig.drag?this.mergeConfig.drag:this.defaultConfig.drag
+        dragEnable:this.drag
       });
       //定位插件
       AMap.plugin('AMap.Geolocation', function() {
@@ -150,14 +153,12 @@ export default {
       });
     },
     showMapContent(){
-      if(!this.readonly){
-        if(this.address&&this.address!=""){
-          this.showMap=true;
-          this.$nextTick(()=>{
-            this._initMap();
-            this.onDrag();
-          })
-        }
+      if(this.address&&this.address!=""){
+        this.showMap=true;
+        this.$nextTick(()=>{
+          this._initMap();
+          this.onDrag();
+        })
       }
     },
     onSearch(){

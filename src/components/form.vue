@@ -7,7 +7,6 @@
 </template>
 <script>
 import "@/mmform/index";
-
 const formSchema={
   type: 'object',
   properties: {
@@ -15,7 +14,7 @@ const formSchema={
       type:'string',
       ui:{
         label:'售点名称',
-        readonly:'dx: {{$const.mode=="view"}}',
+        readonly:"dx: {{$const.mode}}=='view'",
         widget: 'mm-input',
       },
       rules:{
@@ -29,7 +28,7 @@ const formSchema={
       type: 'string',
       ui: {
         label:'地址信息',
-        readonly:'dx: {{$const.mode=="view"}}',
+        readonly:"dx: {{$const.mode}}=='view'",
         widget: 'mm-area',
         widgetConfig:{
           clearable:true
@@ -73,10 +72,10 @@ const formSchema={
       type:'Object',
       ui:{
         label:'位置信息',
-        readonly:'dx: {{$const.mode=="view"}}',
+        readonly:"dx: {{$const.mode}}=='view'",
         widget:'mm-location',
         widgetConfig:{
-          drag:'dx: {{$const.mode=="edit"}}'
+          drag:"dx: {{$const.mode}}=='edit'"
         }
       }
     },
@@ -85,7 +84,7 @@ const formSchema={
       value:"B",
       ui:{
         label:'售点类型',
-        readonly:'dx: {{$const.mode=="view"}}',
+        readonly:"dx: {{$const.mode}}=='view'",
         widget:'mm-select',
         widgetConfig:{
           enumSource:[
@@ -111,7 +110,7 @@ const formSchema={
       typa:'string',
       ui:{
         label:'售点归属',
-        readonly:'dx: {{$const.mode=="view"}}',
+        readonly:"dx: {{$const.mode}}=='view'",
         widget:'mm-select',
         widgetConfig:{
           enumSource:[
@@ -137,7 +136,7 @@ const formSchema={
       typa:'string',
       ui:{
         label:'上游单位',
-        readonly:'dx: {{$const.mode=="view"}}',
+        readonly:"dx: {{$const.mode}}=='view'",
         widget:'mm-select',
         widgetConfig:{
           filterLocal:'false',
@@ -164,7 +163,7 @@ const formSchema={
       typa:'string',
       ui:{
         label:'售点品项',
-        readonly:'dx: {{$const.mode=="view"}}',
+        readonly:"dx: {{$const.mode}}=='view'",
         widget:'mm-select',
         widgetConfig:{
           enumSource:[
@@ -203,7 +202,7 @@ const formSchema={
       value:true,
       ui:{
         label:'合作状态',
-        readonly:'dx: {{$const.mode=="view"}}',
+        readonly:"dx: {{$const.mode}}=='view'",
         widget:'mm-radio',
         widgetConfig:{
           size:'30px'
@@ -215,7 +214,7 @@ const formSchema={
       value:false,
       ui:{
         label:'验证标记',
-        readonly:'dx: {{$const.mode=="view"}}',
+        readonly:"dx: {{$const.mode}}=='view'",
         widget:'mm-radio',
         widgetConfig:{
           size:'30px'
@@ -231,7 +230,21 @@ const formSchema={
 };
 
 var data={
-  
+  name:'cdcd',
+  address:'110101',
+  detailAddress:'xx街道',
+  telphone:'13465237192',
+  location:{
+    lng:121.406051,
+    lat:31.179695,
+    address:'钦汇园'
+  },
+  sellingPointType:"B",
+  sellingPointOwner:"dealer",
+  upstreamUnit:'1',
+  sellingItem:'2',
+  cooperation:true,
+  authentication:true
 };
 export default {
   data () {
