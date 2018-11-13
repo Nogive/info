@@ -3,6 +3,7 @@
 import App from "./App";
 import router from "./router";
 import "./common/fonts/iconfont.css";
+import "./common/css/common.css";
 
 import Utils from "./utils";
 Vue.prototype.Utils = Utils;

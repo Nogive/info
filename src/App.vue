@@ -11,7 +11,7 @@ import {ddApi,callApi,custom} from "@/server/swagger";
 export default {
   name: 'App',
   created(){
-    //this.Utils.openVconsole();
+    this.Utils.openVconsole();
     this._initEnvironment();
   },
   methods:{
@@ -58,7 +58,7 @@ export default {
       callApi(ddApi,'dingConfig',url).then(res=>{
         console.log("dingConfig_res",res);
         let config = res;
-        config.jsApiList = ["biz.util.uploadImageFromCamera","device.geolocation.get"];
+        config.jsApiList = ["biz.util.uploadImageFromCamera","device.geolocation.start","device.geolocation.stop"];
         dd.config(config);
       },err=>{
         if(err.body){

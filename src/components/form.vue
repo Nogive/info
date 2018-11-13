@@ -74,7 +74,10 @@ const formSchema={
       ui:{
         label:'位置信息',
         readonly:'dx: {{$const.mode=="view"}}',
-        widget:'mm-location'
+        widget:'mm-location',
+        widgetConfig:{
+          drag:'dx: {{$const.mode=="edit"}}'
+        }
       }
     },
     sellingPointType:{
@@ -264,5 +267,5 @@ export default {
 .input-box
   box-sizing border-box
   width 100%
-  padding 10px
+  padding .5rem
 </style>

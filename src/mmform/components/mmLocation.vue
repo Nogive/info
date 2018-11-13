@@ -41,6 +41,7 @@
 </template>
 <script>
 import ncformCommon from '@ncform/ncform-common'
+import {onLocationByDing,onLocationByCordova} from "./utils"
 import AMap from 'AMap'
 import AMapUI from 'AMapUI'
 var map;
@@ -67,7 +68,6 @@ export default {
   watch:{
     center(){
       if(this.center){
-        console.log(this.center);
         this.modelVal={
           lng:this.center[0],
           lat:this.center[1],
@@ -109,6 +109,19 @@ export default {
       });
     },
     onLocation(){
+      let _this=this;
+      if(dd.android||dd.ios){
+        onLocationByDing().then(res=>{
+          _this.address=res.address;
+          _this.center=[res.longitude,res.latitude];
+        },err=>{
+          console.log(err);
+        })
+      }else{
+        this.onLocationByGaode();
+      }
+    },
+    onLocationByGaode(){
       var _this=this;
       this.geolocation.getCurrentPosition(function(status,result){
         if(status=='complete'){
@@ -131,7 +144,7 @@ export default {
           _this.center=[positionResult.position.lng,positionResult.position.lat];
         });
         positionPicker.on('fail', function(positionResult) {
-          Toast('拖拽出现问题，请保证网络环境，稍后重试~');
+          console.log('拖拽出现问题，请保证网络环境，稍后重试~');
         });
         positionPicker.start();
       });
@@ -177,65 +190,67 @@ export default {
 }
 </script>
 <style scoped lang="stylus">
-.addr-box
-  width 100%
+.location
   padding 10px 0
-  .addr-text
-    padding-left 8px
-    .search-box
-      position relative
-      .text
+  .addr-box
+    width 100%
+    padding 10px 0
+    .addr-text
+      padding-left 8px
+      .search-box
+        position relative
+        .text
+          width 100%
+          height 35px
+          border 1px solid rgba(7,17,27,.3)
+          border-radius 3px
+          padding 0 8px
+          white-space nowrap
+          overflow hidden
+          text-overflow ellipsis
+          font-size 12px
+        .tip
+          width calc(100% - 5px)
+          min-height 310px
+          overflow-y auto
+          position absolute
+          z-index 2
+          border 1px solid rgba(7,17,27,.3)
+          background #ffffff
+          .tip-item
+            border-bottom 1px solid rgba(7,17,27,.3)
+            padding 6px 8px
+            font-size 12px
+            &.tip-item:last-child
+              border-bottom none
+      .icon-btns
         width 100%
         height 35px
-        border 1px solid rgba(7,17,27,.3)
-        border-radius 3px
-        padding 0 8px
-        white-space nowrap
-        overflow hidden
-        text-overflow ellipsis
-        font-size 12px
-      .tip
-        width calc(100% - 5px)
-        min-height 310px
-        overflow-y auto
-        position absolute
-        z-index 2
-        border 1px solid rgba(7,17,27,.3)
-        background #ffffff
-        .tip-item
-          border-bottom 1px solid rgba(7,17,27,.3)
-          padding 6px 8px
-          font-size 12px
-          &.tip-item:last-child
-            border-bottom none
-    .icon-btns
-      width 100%
-      height 35px
-      position relative
-      .icon
-        font-size 24px
-        position absolute
-        right 8px
-        top 5px
-  .map-content
-    margin-top 10px
-    height 300px
-    .map-box,.drag-map
-      width 100%
-      height 100%
-    .map-box
-      .m-img
+        position relative
+        .icon
+          font-size 24px
+          position absolute
+          right 8px
+          top 5px
+    .map-content
+      margin-top 10px
+      height 300px
+      .map-box,.drag-map
         width 100%
         height 100%
-    .drag-map
-      position relative
-      .mapmap
-        width 100%
-        height 100%
-      .location-btn
-        position absolute
-        font-size 30px
-        color rgb(0,160,220)
-        right 10px
-        bottom 10px  
+      .map-box
+        .m-img
+          width 100%
+          height 100%
+      .drag-map
+        position relative
+        .mapmap
+          width 100%
+          height 100%
+        .location-btn
+          position absolute
+          font-size 30px
+          color rgb(0,160,220)
+          right 10px
+          bottom 10px  
 </style>

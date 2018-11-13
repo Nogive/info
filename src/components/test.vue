@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { uploadImageFromCamera,getLocation} from "@/common/js/ding";
+import { uploadImageFromCamera,onLocation} from "@/common/js/ding";
 import {callApi} from "@/server/axios";
 import {account} from "@/server/api";
 export default {
@@ -36,8 +36,8 @@ export default {
     },
     getGPS(){
       console.log('获取GPS');
-      getLocation().then(res=>{
-        console.log(res);
+      onLocation().then(res=>{
+        console.log("测试返回结果:",res);
       },err=>{
         console.error(err);
       })
