@@ -132,7 +132,7 @@
 </style>
 
 <script>
-var superagent = require('superagent');
+import axios from "axios";
 import _get from "lodash-es/get";
 import _cloneDeep from 'lodash-es/cloneDeep';
 import ncformCommon from '@ncform/ncform-common'
@@ -266,28 +266,27 @@ export default {
     remoteMethod(query) {//远程请求选项
       console.log(2);
       if(!_get(this.mergeConfig, 'enumSourceRemote.remoteUrl')){ return; };
-      var agent=superagent.agent();
-      //设置请求头
-      if(this.mergeConfig.enumSourceRemote.withAuthorization){
-        agent.set('Authorization',JSON.parse(window.localStorage.getItem('token')))
-      }
       const options = {
+        type:'GET',
         url: this.mergeConfig.enumSourceRemote.remoteUrl,
         params: JSON.parse(JSON.stringify(this.otherParams))
       };
+      //设置请求头
+      if(this.mergeConfig.enumSourceRemote.withAuthorization){
+        options.headers={
+          'Authorization': JSON.parse(window.localStorage.getItem('token')),
+        }
+      }
+      console.log(options);
       options.params[
         this.mergeConfig.enumSourceRemote.paramName
       ] = query;
-      agent.get(options.url)
-        .query(options.params)
-        .then(res=>{
-          let tempArr = this.mergeConfig.enumSourceRemote.resField ? _get(res.body, this.mergeConfig.enumSourceRemote.resField) : res.body;
-          this.localSource=this.setResource(tempArr);
-          this.optionSource=this.setResource(tempArr);
-          this.selectFirstOption();
-        },err=>{
-          console.log(err.response);
-        })
+      axios(options).then(res => {
+        let tempArr = this.mergeConfig.enumSourceRemote.resField ? _get(res.data, this.mergeConfig.enumSourceRemote.resField) : res.data;
+        this.localSource=this.setResource(tempArr);
+        this.optionSource=this.setResource(tempArr);
+        this.selectFirstOption();
+      });
     },
     setResource(remote){//解析远程数据
       let res=[];

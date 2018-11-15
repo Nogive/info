@@ -103,6 +103,7 @@ export function callApi(params) {
         }
       })
       .catch(error => {
+        console.log(error.response);
         Utils.error(params.that, error);
       });
   } else {

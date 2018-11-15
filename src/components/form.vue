@@ -1,12 +1,13 @@
 <template>
   <div class="input-box">
-    <ncform v-if="!isSchemaChanging" :form-schema="formSchema" form-name="formSchema" v-model="formSchema.value"></ncform>
+    <ncform v-if="isSchemaChanging" :form-schema="formSchema" form-name="formSchema" v-model="formSchema.value"></ncform>
     <van-button size="small" @click="submit()">Submit</van-button>
     <van-button size="small" @click="setValue()">setValue</van-button>
   </div>
 </template>
 <script>
 import "@/mmform/index";
+import {callApi} from "@/server/axios"
 const formSchema={
   type: 'object',
   properties: {
@@ -45,7 +46,7 @@ const formSchema={
       type:'string',
       ui:{
         label:'详细地址',
-        readonly:'dx: {{$const.mode=="view"}}',
+        readonly:'dx: {{$const.mode}}=="view"',
         placeholder:'请输入详细地址，如门牌号，街道等',
         widget:'mm-textarea',
         widgetConfig:{
@@ -58,7 +59,7 @@ const formSchema={
       type:'string',
       ui:{
         label:'联系电话',
-        readonly:'dx: {{$const.mode=="view"}}',
+        readonly:'dx: {{$const.mode}}=="view"',
         widget: 'mm-input',
       },
       rules:{
@@ -80,7 +81,7 @@ const formSchema={
       }
     },
     sellingPointType:{
-      typa:'string',
+      type:'string',
       value:"B",
       ui:{
         label:'售点类型',
@@ -107,7 +108,7 @@ const formSchema={
       }
     },
     sellingPointOwner:{
-      typa:'string',
+      type:'string',
       ui:{
         label:'售点归属',
         readonly:"dx: {{$const.mode}}=='view'",
@@ -133,7 +134,7 @@ const formSchema={
       }
     },
     upstreamUnit:{
-      typa:'string',
+      type:'string',
       ui:{
         label:'上游单位',
         readonly:"dx: {{$const.mode}}=='view'",
@@ -146,9 +147,9 @@ const formSchema={
             remoteUrl: "http://rap2api.taobao.org/app/mock/105585/options",
             paramName: "keyword",
             resField: "options",
-            otherParams:{sellPointOwner:'dx:{{$root.sellingPointOwner}}'},
+            otherParams:{sellingPointOwner:'dx:{{$root.sellingPointOwner}}'},
             selectFirstitem: true,
-            withAuthoration:true,
+            withAuthorization:true,
           }
         }
       },
@@ -160,7 +161,7 @@ const formSchema={
       }
     },
     sellingItem:{
-      typa:'string',
+      type:'string',
       ui:{
         label:'售点品项',
         readonly:"dx: {{$const.mode}}=='view'",
@@ -224,7 +225,7 @@ const formSchema={
   },
   globalConfig:{
     constants:{
-      mode:'view'
+      mode:'edit'
     }
   }
 };
@@ -250,10 +251,44 @@ export default {
   data () {
     return {
       isSchemaChanging:false,
-      formSchema: formSchema
+      formSchema: {},
+      systemSchemaId:1,
+      systemSchemaVersion:0
     }
   },
+  created(){
+    this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
+    //this.formSchema=formSchema;
+    //this.isSchemaChanging=true;
+    this.getSchema();
+  },
+  mounted(){
+    this.$nextTick(function () {
+      // this.formSchema=formSchema;
+      // this.isSchemaChanging=true;
+    })
+  },
   methods: {
+    getSchema(){
+      let _this=this;
+      callApi({
+        that:_this,
+        type:"get",
+        url:'http://x.waiqin.co/api/schema?id=9&mode=edit',
+        headers:{
+          Authorization:'a3ULGGVU05pQ4Rnj'
+        },
+        success:function(data){
+          _this.systemSchemaId=data.systemSchemaId;
+          _this.systemSchemaVersion=data.systemSchemaVersion;
+          _this.formSchema=JSON.parse(data.schema);
+          _this.isSchemaChanging=true;
+        },
+        error:function(err){
+          console.log('error',err);
+        }
+      })
+    },
     submit () {
       this.$ncformValidate('formSchema').then(data => {
         if (data.result) {
