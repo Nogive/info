@@ -7,7 +7,7 @@
 </template>
 <script>
 import "@/mmform/index";
-import {callApi} from "@/server/axios"
+import { schemaApi,sellingPointApi,custom,callApi } from "@/server/swagger";
 const formSchema={
   type: 'object',
   properties: {
@@ -260,48 +260,55 @@ export default {
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
     //this.formSchema=formSchema;
     //this.isSchemaChanging=true;
+    custom.setAuth(this.Utils.Local.get('token'));
     this.getSchema();
-  },
-  mounted(){
-    this.$nextTick(function () {
-      // this.formSchema=formSchema;
-      // this.isSchemaChanging=true;
-    })
   },
   methods: {
     getSchema(){
       let _this=this;
-      callApi({
-        that:_this,
-        type:"get",
-        url:'http://x.waiqin.co/api/schema?id=9&mode=edit',
-        headers:{
-          Authorization:'a3ULGGVU05pQ4Rnj'
-        },
-        success:function(data){
-          _this.systemSchemaId=data.systemSchemaId;
-          _this.systemSchemaVersion=data.systemSchemaVersion;
-          _this.formSchema=JSON.parse(data.schema);
-          _this.isSchemaChanging=true;
-        },
-        error:function(err){
-          console.log('error',err);
+      var opts={
+        id:9,
+        mode:'edit'
+      }
+      callApi(schemaApi,'getSchema',opts).then(res=>{
+        _this.systemSchemaId=res.systemSchemaId;
+        _this.systemSchemaVersion=res.systemSchemaVersion;
+        _this.formSchema=JSON.parse(res.schema);
+        _this.isSchemaChanging=true;
+      },err=>{
+        if(err.body){
+          console.log("errorBody:",err.body);
+        }else{
+          tools.dealError(_this,err);
         }
       })
     },
     submit () {
+      let _this=this;
       this.$ncformValidate('formSchema').then(data => {
         if (data.result) {
-          console.log(this.$data.formSchema.value);
-          /*
-          let params={
-            systemSchemaId:1,
-            systemSchemaVersion:1,
-            systemCreatorUserId:1,
-            formData:this.$data.formSchema.value
+          let formdata=this.$data.formSchema.value;
+          formdata.location={
+            lat:0,
+            lng:0,
+            address:''
           };
-          console.log(params)
-          */
+          let params={
+            systemSchemaId:_this.systemSchemaId,
+            systemSchemaVersion:_this.systemSchemaVersion,
+            systemCreatorUserId:"210000",
+            formData:formdata
+          };
+          callApi(sellingPointApi,'createSellingPoint',params).then(res=>{
+            _this.$toast("提交成功");
+            _this.$router.back();
+          },err=>{
+            if(err.body){
+              console.log("errorBody:",err.body);
+            }else{
+              tools.dealError(_this,err);
+            }
+          })
         }
       })
     },

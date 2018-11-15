@@ -2,10 +2,13 @@
  *  import {accountApi,callApi,custom} from "@server/swagger"
  * @example callApi(ddApi,'dingGetuserinfo',params).then(res=>{},err=>{})
  */
+import tools from "@/common/js/tool";
 const XFieldApi = require("x_field_api");
 /*---------------------API--------------------------------------------- */
 //ddApi
 export var ddApi = new XFieldApi.DingApi();
+export var schemaApi = new XFieldApi.SchemasApi();
+export var sellingPointApi = new XFieldApi.SellingPointApi();
 
 //dingApi里面的参数
 const apiParams = {
@@ -17,6 +20,12 @@ const apiParams = {
   },
   dingGetuserinfo: function(body) {
     return new XFieldApi.DingSsoRequest.constructFromObject(body);
+  },
+  getSchema: function(opts) {
+    return opts;
+  },
+  createSellingPoint: function(body) {
+    return new XFieldApi.CreateSellingPoint.constructFromObject(body);
   }
 };
 /**
