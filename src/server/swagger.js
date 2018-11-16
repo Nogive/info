@@ -7,8 +7,7 @@ const XFieldApi = require("x_field_api");
 /*---------------------API--------------------------------------------- */
 //ddApi
 export var ddApi = new XFieldApi.DingApi();
-export var schemaApi = new XFieldApi.SchemasApi();
-export var sellingPointApi = new XFieldApi.SellingPointApi();
+export var dformApi = new XFieldApi.DformApi();
 
 //dingApi里面的参数
 const apiParams = {
@@ -24,8 +23,8 @@ const apiParams = {
   getSchema: function(opts) {
     return opts;
   },
-  createSellingPoint: function(body) {
-    return new XFieldApi.CreateSellingPoint.constructFromObject(body);
+  createFormdata: function(body) {
+    return new XFieldApi.CreateFormdata.constructFromObject(body);
   }
 };
 /**

@@ -7,7 +7,7 @@
 </template>
 <script>
 import "@/mmform/index";
-import { schemaApi,sellingPointApi,custom,callApi } from "@/server/swagger";
+import { dformApi,custom,callApi } from "@/server/swagger";
 const formSchema={
   type: 'object',
   properties: {
@@ -61,6 +61,9 @@ const formSchema={
         label:'联系电话',
         readonly:'dx: {{$const.mode}}=="view"',
         widget: 'mm-input',
+        widgetConfig:{
+          type:'tel'
+        }
       },
       rules:{
         tel:{
@@ -73,7 +76,7 @@ const formSchema={
       type:'Object',
       ui:{
         label:'位置信息',
-        readonly:"dx: {{$const.mode}}=='view'",
+        readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-location',
         widgetConfig:{
           drag:"dx: {{$const.mode}}=='edit'"
@@ -82,10 +85,9 @@ const formSchema={
     },
     sellingPointType:{
       type:'string',
-      value:"B",
       ui:{
         label:'售点类型',
-        readonly:"dx: {{$const.mode}}=='view'",
+        readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-select',
         widgetConfig:{
           enumSource:[
@@ -111,7 +113,7 @@ const formSchema={
       type:'string',
       ui:{
         label:'售点归属',
-        readonly:"dx: {{$const.mode}}=='view'",
+        readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-select',
         widgetConfig:{
           enumSource:[
@@ -137,7 +139,7 @@ const formSchema={
       type:'string',
       ui:{
         label:'上游单位',
-        readonly:"dx: {{$const.mode}}=='view'",
+        readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-select',
         widgetConfig:{
           filterLocal:'false',
@@ -161,34 +163,50 @@ const formSchema={
       }
     },
     sellingItem:{
-      type:'string',
+      type:'array',
+      items:{
+        type:'object',
+        properties:{
+           pingxiang:{
+            type:'string',
+            ui:{
+              label:'品项选择',
+              readonly:'dx: {{$const.mode}}=="view"',
+              widget:'mm-select',
+              widgetConfig:{
+                filterable:true,
+                filterLocal:true,
+                itemValueField: "key",
+                itemLabelField: "value",
+                enumSourceRemote: {
+                  remoteUrl: "http://rap2api.taobao.org/app/mock/105585/options",//远程请求的地址
+                  paramName: "keyword",
+                  resField: "options",
+                  otherParams:{},
+                  selectFirstitem: true,//是否选中第一项
+                  withAuthorization:true,
+                }
+              }
+            },
+            rules:{
+              required:{
+                value:true,
+                errMsg:'必填'
+              }
+            }
+          },
+        },
+        ui:{
+          label:'品项'
+        }
+      },
       ui:{
         label:'售点品项',
-        readonly:"dx: {{$const.mode}}=='view'",
-        widget:'mm-select',
+        legend:'售点品项表',
+        readonly:'dx: {{$const.mode}}=="view"',
+        widget:'mm-array',
         widgetConfig:{
-          enumSource:[
-            {
-              value:"1",
-              label:"日加满"
-            },
-            {
-              value:"2",
-              label:"魅力厨房"
-            },
-            {
-              value:"3",
-              label:"东珍"
-            },
-            {
-              value:"4",
-              label:"朝天香"
-            },
-            {
-              value:"5",
-              label:"金咯勒"
-            },
-          ]
+          collapsed:false
         }
       },
       rules:{
@@ -203,7 +221,7 @@ const formSchema={
       value:true,
       ui:{
         label:'合作状态',
-        readonly:"dx: {{$const.mode}}=='view'",
+        readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-radio',
         widgetConfig:{
           size:'30px'
@@ -215,7 +233,7 @@ const formSchema={
       value:false,
       ui:{
         label:'验证标记',
-        readonly:"dx: {{$const.mode}}=='view'",
+        readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-radio',
         widgetConfig:{
           size:'30px'
@@ -258,10 +276,10 @@ export default {
   },
   created(){
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
-    //this.formSchema=formSchema;
-    //this.isSchemaChanging=true;
+    this.formSchema=formSchema;
+    this.isSchemaChanging=true;
     custom.setAuth(this.Utils.Local.get('token'));
-    this.getSchema();
+    //this.getSchema();
   },
   methods: {
     getSchema(){
@@ -270,7 +288,7 @@ export default {
         id:9,
         mode:'edit'
       }
-      callApi(schemaApi,'getSchema',opts).then(res=>{
+      callApi(dformApi,'getSchema',opts).then(res=>{
         _this.systemSchemaId=res.systemSchemaId;
         _this.systemSchemaVersion=res.systemSchemaVersion;
         _this.formSchema=JSON.parse(res.schema);
@@ -299,7 +317,7 @@ export default {
             systemCreatorUserId:"210000",
             formData:formdata
           };
-          callApi(sellingPointApi,'createSellingPoint',params).then(res=>{
+          callApi(dformApi,'createFormdata',params).then(res=>{
             _this.$toast("提交成功");
             _this.$router.back();
           },err=>{
