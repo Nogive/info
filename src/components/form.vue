@@ -15,7 +15,7 @@ const formSchema={
       type:'string',
       ui:{
         label:'售点名称',
-        readonly:"dx: {{$const.mode}}=='view'",
+        readonly:'dx: {{$const.mode}}=="view"',
         widget: 'mm-input',
       },
       rules:{
@@ -29,7 +29,7 @@ const formSchema={
       type: 'string',
       ui: {
         label:'地址信息',
-        readonly:"dx: {{$const.mode}}=='view'",
+        readonly:'dx: {{$const.mode}}=="view"',
         widget: 'mm-area',
         widgetConfig:{
           clearable:true
@@ -79,7 +79,7 @@ const formSchema={
         readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-location',
         widgetConfig:{
-          drag:"dx: {{$const.mode}}=='edit'"
+          drag:'dx: {{$const.mode}}=="edit"',
         }
       }
     },
@@ -92,12 +92,8 @@ const formSchema={
         widgetConfig:{
           enumSource:[
             {
-              value:"B",
-              label:"B"
-            },
-            {
-              value:"C",
-              label:"C"
+              value:'BC',
+              label:'BC'
             }
           ]
         }
@@ -118,12 +114,12 @@ const formSchema={
         widgetConfig:{
           enumSource:[
             {
-              value:"directly",
-              label:"直营售点"
+              value:'directly',
+              label:'直营售点'
             },
             {
-              value:"dealer",
-              label:"经销商下线"
+              value:'dealer',
+              label:'dealer'
             }
           ]
         }
@@ -143,12 +139,12 @@ const formSchema={
         widget:'mm-select',
         widgetConfig:{
           filterLocal:'false',
-          itemValueField: "key",
-          itemLabelField: "value",
+          itemValueField: 'id',
+          itemLabelField: 'name',
           enumSourceRemote: {
-            remoteUrl: "http://rap2api.taobao.org/app/mock/105585/options",
-            paramName: "keyword",
-            resField: "options",
+            remoteUrl: 'http://x.waiqin.co/api/dongke/filterUpstreamUnit',
+            paramName: 'keyword',
+            resField: 'data',
             otherParams:{sellingPointOwner:'dx:{{$root.sellingPointOwner}}'},
             selectFirstitem: true,
             withAuthorization:true,
@@ -167,7 +163,7 @@ const formSchema={
       items:{
         type:'object',
         properties:{
-           pingxiang:{
+          pingxiang:{
             type:'string',
             ui:{
               label:'品项选择',
@@ -176,12 +172,12 @@ const formSchema={
               widgetConfig:{
                 filterable:true,
                 filterLocal:true,
-                itemValueField: "key",
-                itemLabelField: "value",
+                itemValueField: 'id',
+                itemLabelField: 'name',
                 enumSourceRemote: {
-                  remoteUrl: "http://rap2api.taobao.org/app/mock/105585/options",//远程请求的地址
-                  paramName: "keyword",
-                  resField: "options",
+                  remoteUrl: 'http://x.waiqin.co/api/dongke/pinxiang',
+                  paramName: 'keyword',
+                  resField: 'data',
                   otherParams:{},
                   selectFirstitem: true,//是否选中第一项
                   withAuthorization:true,
@@ -276,22 +272,23 @@ export default {
   },
   created(){
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
-    this.formSchema=formSchema;
-    this.isSchemaChanging=true;
+    //this.formSchema=formSchema;
+    //this.isSchemaChanging=true;
     custom.setAuth(this.Utils.Local.get('token'));
-    //this.getSchema();
+    this.getSchema();
   },
   methods: {
     getSchema(){
       let _this=this;
       var opts={
-        id:9,
+        id:1,
         mode:'edit'
       }
       callApi(dformApi,'getSchema',opts).then(res=>{
+        console.log(res.schema);
         _this.systemSchemaId=res.systemSchemaId;
         _this.systemSchemaVersion=res.systemSchemaVersion;
-        _this.formSchema=JSON.parse(res.schema);
+        _this.formSchema=res.schema;
         _this.isSchemaChanging=true;
       },err=>{
         if(err.body){
