@@ -164,7 +164,9 @@ export default {
     }
   },
   mounted(){
-    if(this.mergeConfig.enumSource){
+    if(this.mergeConfig.enumSourceRemote){
+      this.remoteMethod()
+    }else{
       this.localSource=this.mergeConfig.enumSource;
       this.optionSource=this.mergeConfig.enumSource;
     }
@@ -264,7 +266,6 @@ export default {
       }
     },
     remoteMethod(query) {//远程请求选项
-      console.log(2);
       if(!_get(this.mergeConfig, 'enumSourceRemote.remoteUrl')){ return; };
       var agent=superagent.agent();
       //设置请求头
