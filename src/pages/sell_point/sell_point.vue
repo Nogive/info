@@ -17,7 +17,7 @@
             @load="loadMore"
           >
             <ul class="sell-list">
-              <li class="sell-item" v-for="(item,index) in list" :key="index">
+              <li class="sell-item" v-for="(item,index) in list" :key="index" @click="goCustom">
                 <div class="content">
                   <p class="name">{{item.name}}-{{index}}</p>
                   <p class="desc">{{item.describe}} <span class="fr dis">{{item | computeDix}}</span></p>
@@ -122,6 +122,9 @@ export default {
     },
     onSearch(){
       console.log('搜索');
+    },
+    goCustom(){
+      this.$router.push('/custom')
     }
   }
 }

@@ -9,29 +9,35 @@
           </router-link>
         </van-col>
         <van-col span="6">
-          <router-link to="/">
+          <router-link to="/jinhuo">
             <i class="iconfont orange">&#xe649;</i>
             <h5 class="title">进货信息</h5>
           </router-link>
         </van-col>
         <van-col span="6">
-          <router-link to="/">
+          <router-link to="/xiaohuo">
             <i class="iconfont green">&#xe656;</i>
             <h5 class="title">销货信息</h5>
+          </router-link>
+        </van-col>
+        <van-col span="6">
+          <router-link to="/kucun">
+            <i class="iconfont blue">&#xe616;</i>
+            <h5 class="title">库存信息</h5>
+          </router-link>
+        </van-col>
+      </van-row>
+      <van-row class="mb10">
+        <van-col span="6">
+          <router-link to="/visitation">
+            <i class="iconfont red">&#xe60a;</i>
+            <h5 class="title">售点拜访</h5>
           </router-link>
         </van-col>
         <van-col span="6">
           <router-link to="/">
             <i class="iconfont blue">&#xe616;</i>
             <h5 class="title">销货统计</h5>
-          </router-link>
-        </van-col>
-      </van-row>
-      <van-row class="mb10">
-        <van-col span="6">
-          <router-link :to="'/sell_point/'+mode.visit">
-            <i class="iconfont red">&#xe60a;</i>
-            <h5 class="title">售点拜访</h5>
           </router-link>
         </van-col>
       </van-row>

@@ -11,91 +11,34 @@ import "@/mmform/index";
 const formSchema={
   type: 'object',
   properties: {
-    name:{
-      type:'string',
+    shoudian:{
+      type:'Object',
+      value:{
+        id:1,
+        name:'ceshi'
+      },
       ui:{
         label:'售点名称',
-        readonly:'dx: {{$const.mode}}=="view"',
-        widget: 'mm-input',
-      },
-      rules:{
-        required:{
-          value:true,
-          errMsg:'必填'
-        }
-      }
-    },
-    address: {
-      type: 'string',
-      ui: {
-        label:'地址信息',
-        readonly:'dx: {{$const.mode}}=="view"',
-        widget: 'mm-area',
+        readonly:true,
+        widget:'mm-foreign-object',
         widgetConfig:{
-          clearable:true
-        }
-      },
-      rules:{
-        required:{
-          value:true,
-          errMsg:'必填'
+          itemLabelField:'value',
+          remoteUrl: 'http://rap2api.taobao.org/app/mock/105585/options',//远程请求的地址
+          paramName: 'keyword',
+          resField: 'options',
+          otherParams:{id:'dx:{{$root.name.id}}'},
+          withAuthorization:true,
         }
       }
     },
-    detailAddress:{
-      type:'string',
+    start:{
+      type:'number',
       ui:{
-        label:'详细地址',
-        readonly:'dx: {{$const.mode}}=="view"',
-        placeholder:'请输入详细地址，如门牌号，街道等',
-        widget:'mm-textarea',
+        label:'开始日期',
+        readonly:'dx:{{$const.mode}}=="view"',
+        widget:'mm-date-picker',
         widgetConfig:{
-          rows:1,
-          autosize:true
-        }
-      }
-    },
-    telphone:{
-      type:'string',
-      ui:{
-        label:'联系电话',
-        readonly:'dx: {{$const.mode}}=="view"',
-        widget: 'mm-input',
-        widgetConfig:{
-          type:'tel'
-        }
-      },
-      rules:{
-        tel:{
-          value:true,
-          errMsg:'电话号码格式不合法'
-        }
-      }
-    },
-    location:{
-      type:'Object',
-      ui:{
-        label:'位置信息',
-        readonly:'dx: {{$const.mode}}=="view"',
-        widget:'mm-location',
-        widgetConfig:{
-          drag:'dx: {{$const.mode}}=="edit"',
-        }
-      }
-    },
-    sellingPointType:{
-      type:'string',
-      ui:{
-        label:'售点类型',
-        readonly:'dx: {{$const.mode}}=="view"',
-        widget:'mm-select',
-        widgetConfig:{
-          enumSource:[
-            {
-              value:'BC',
-              label:'BC'
-            }
-          ]
+          type:'date',
         }
       },
       rules:{
@@ -105,68 +48,33 @@ const formSchema={
         }
       }
     },
-    sellingPointOwner:{
-      type:'string',
+    end:{
+      type:'number',
       ui:{
-        label:'售点归属',
-        readonly:'dx: {{$const.mode}}=="view"',
-        widget:'mm-select',
+        label:'结束日期',
+        readonly:'dx:{{$const.mode}}=="view"',
+        widget:'mm-date-picker',
         widgetConfig:{
-          enumSource:[
-            {
-              value:'directly',
-              label:'直营售点'
-            },
-            {
-              value:'dealer',
-              label:'dealer'
-            }
-          ]
+          type:'date',
         }
       },
       rules:{
-        required:{
-          value:true,
-          errMsg:'必填'
+        required:true,
+        customRule:{
+          script:'dx:{{$root.end}} < {{$root.start}}',
+          errMsg:'结束日期要在开始日期之前'
         }
       }
     },
-    upstreamUnit:{
-      type:'string',
-      ui:{
-        label:'上游单位',
-        readonly:'dx: {{$const.mode}}=="view"',
-        widget:'mm-select',
-        widgetConfig:{
-          filterLocal:'false',
-          itemValueField: 'id',
-          itemLabelField: 'name',
-          enumSourceRemote: {
-            remoteUrl: 'http://x.waiqin.co/api/dongke/filterUpstreamUnit',
-            paramName: 'keyword',
-            resField: 'data',
-            otherParams:{sellingPointOwner:'dx:{{$root.sellingPointOwner}}'},
-            selectFirstitem: true,
-            withAuthorization:true,
-          }
-        }
-      },
-      rules:{
-        required:{
-          value:true,
-          errMsg:'必填'
-        }
-      }
-    },
-    sellingItem:{
+    chanpin:{
       type:'array',
       items:{
         type:'object',
         properties:{
-          pingxiang:{
+          chanpingming:{
             type:'string',
             ui:{
-              label:'品项选择',
+              label:'产品名',
               readonly:'dx: {{$const.mode}}=="view"',
               widget:'mm-select',
               widgetConfig:{
@@ -191,14 +99,57 @@ const formSchema={
               }
             }
           },
+          count:{
+            type:'number',
+            ui:{
+                label:'数量',
+                readonly:'dx:{{$const.mode}}=="view"',
+                widget:'mm-number',
+                widgetConfig:{
+                step:1,
+                min:Number.NEGATIVE_INFINITY
+                }
+            },
+            rules: {
+                required:true,
+            }
+          },
+          danwei:{
+            type:'string',
+            ui:{
+              label:'单位',
+              readonly:'dx: {{$const.mode}}=="view"',
+              widget:'mm-select',
+              widgetConfig:{
+                filterable:true,
+                filterLocal:true,
+                itemValueField: 'key',
+                itemLabelField: 'value',
+                enumSourceRemote: {
+                  remoteUrl: 'http://rap2api.taobao.org/app/mock/105585/options',
+                  paramName: 'keyword',
+                  resField: 'options',
+                  otherParams:{unit:'dx:{{$root.gonghuodanwei}}'},//TODO:dx表达式
+                  selectFirstitem: true,//是否选中第一项
+                  withAuthorization:true,
+                }
+              }
+            },
+            rules:{
+              required:{
+                value:true,
+                errMsg:'必填'
+              }
+            }
+          },
         },
         ui:{
           label:'品项'
         }
       },
       ui:{
-        label:'售点品项',
-        legend:'售点品项表',
+        label:'产品',
+        legend:'产品表',
         readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-array',
         widgetConfig:{
@@ -212,54 +163,12 @@ const formSchema={
         }
       }
     },
-    cooperation:{
-      type:'boolean',
-      value:true,
-      ui:{
-        label:'合作状态',
-        readonly:'dx: {{$const.mode}}=="view"',
-        widget:'mm-radio',
-        widgetConfig:{
-          size:'30px'
-        }
-      }
-    },
-    authentication:{
-      type:'boolean',
-      value:false,
-      ui:{
-        label:'验证标记',
-        readonly:'dx: {{$const.mode}}=="view"',
-        widget:'mm-radio',
-        widgetConfig:{
-          size:'30px'
-        }
-      }
-    }
   },
   globalConfig:{
     constants:{
       mode:'edit'
     }
   }
-};
-
-var data={
-  name:'cdcd',
-  address:'110101',
-  detailAddress:'xx街道',
-  telphone:'13465237192',
-  location:{
-    lng:121.406051,
-    lat:31.179695,
-    address:'钦汇园'
-  },
-  sellingPointType:"B",
-  sellingPointOwner:"dealer",
-  upstreamUnit:'1',
-  sellingItem:'2',
-  cooperation:true,
-  authentication:true
 };
 export default {
   data () {

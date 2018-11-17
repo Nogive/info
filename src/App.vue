@@ -7,7 +7,7 @@
 <script>
 import tools from "@/common/js/tool"
 import { requestAuthCode } from "@/common/js/ding";
-import {ddApi,callApi,custom} from "@/server/swagger";
+//import {ddApi,callApi,custom} from "@/server/swagger";
 export default {
   name: 'App',
   created(){
@@ -16,7 +16,7 @@ export default {
   },
   methods:{
     _initEnvironment(){
-      this._initDingTalk();
+      //this._initDingTalk();
       this._dingError();
     },
     _initDingTalk(){

@@ -22,6 +22,31 @@ export default new Router({
       component: () => import("@/components/test")
     },
     {
+      path: "/custom",
+      name: "custom",
+      component: () => import("@/pages/sell_point/custom")
+    },
+    {
+      path: "/jinhuo",
+      name: "jinhuo",
+      component: () => import("@/pages/sell_point/jinhuo")
+    },
+    {
+      path: "/xiaohuo",
+      name: "xiaohuo",
+      component: () => import("@/pages/sell_point/xiaohuo")
+    },
+    {
+      path: "/kucun",
+      name: "kucun",
+      component: () => import("@/pages/sell_point/kucun")
+    },
+    {
+      path: "/visitation",
+      name: "visitation",
+      component: () => import("@/pages/visitation/visitation")
+    },
+    {
       path: "/form",
       name: "form",
       component: () => import("@/components/form")
