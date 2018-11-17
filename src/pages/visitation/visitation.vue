@@ -11,6 +11,26 @@ import "@/mmform/index";
 const formSchema={
   type: 'object',
   properties: {
+    shoudian:{
+      type:'Object',
+      value:{
+        id:1,
+        name:'ceshi'
+      },
+      ui:{
+        label:'售点名称',
+        readonly:true,
+        widget:'mm-foreign-object',
+        widgetConfig:{
+          itemLabelField:'value',
+          remoteUrl: 'http://rap2api.taobao.org/app/mock/105585/options',//远程请求的地址
+          paramName: 'keyword',
+          resField: 'options',
+          otherParams:{id:'dx:{{$root.name.id}}'},
+          withAuthorization:true,
+        }
+      }
+    },
     qiandao:{
       type:'Object',
       ui:{
