@@ -297,8 +297,8 @@ export default {
       if(remote&&remote.length>0){
         remote.forEach(e=>{
           res.push({
-            label:e[labelField],
-            value:e[valueField]
+            label:_get(e,labelField),
+            value:_get(e,valueField)
           })
         })
       }

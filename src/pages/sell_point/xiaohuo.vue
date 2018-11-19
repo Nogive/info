@@ -1,37 +1,35 @@
 <template>
   <div class="input-box">
-    <ncform v-if="isSchemaChanging" :form-schema="formSchema" form-name="formSchema" v-model="formSchema.value"></ncform>
-    <van-button size="small" @click="submit()">Submit</van-button>
-    <van-button size="small" @click="setValue()">setValue</van-button>
+    <ncform v-if="isSchemaChanging" :form-schema="xiaohuoSchema" form-name="xiaohuoSchema" v-model="xiaohuoSchema.value"></ncform>
+    <div class="btns">
+      <van-button size="large" type="primary" @click="submit()">Submit</van-button>
+      <van-button size="large" type="primary" @click="setValue()">setValue</van-button>
+    </div>
   </div>
 </template>
 <script>
 import "@/mmform/index";
-//import { dformApi,custom,callApi } from "@/server/swagger";
+import { dformApi,custom,callApi } from "@/server/swagger";
 const formSchema={
   type: 'object',
   properties: {
-    shoudian:{
+    shoudianmingchen:{
       type:'Object',
-      value:{
-        id:1,
-        name:'ceshi'
-      },
       ui:{
         label:'售点名称',
         readonly:true,
         widget:'mm-foreign-object',
         widgetConfig:{
-          itemLabelField:'value',
-          remoteUrl: 'http://rap2api.taobao.org/app/mock/105585/options',//远程请求的地址
+          itemLabelField:'name',
+          remoteUrl: 'http://x.waiqin.co/api/custom/search',
           paramName: 'keyword',
-          resField: 'options',
-          otherParams:{id:'dx:{{$root.name.id}}'},
+          resField: 'data',
+          otherParams:{id:'dx:{{$root.shoudianmingchen.id}}'},
           withAuthorization:true,
         }
       }
     },
-    start:{
+    kaishiriqi:{
       type:'number',
       ui:{
         label:'开始日期',
@@ -45,10 +43,22 @@ const formSchema={
         required:{
           value:true,
           errMsg:'必填'
-        }
+        },
+        customRule:[
+          {
+            script:'dx:!{{$root.end}} || {{$root.jieshuriqi}} >= {{$root.kaishiriqi}}',
+            errMsg:'开始日期必须小于等于结束日期',
+            linkItems:[
+              {
+                fieldPath:'jieshuriqi',
+                customRuleIdx:0
+              }
+            ]
+          }
+        ]
       }
     },
-    end:{
+    jieshuriqi:{
       type:'number',
       ui:{
         label:'结束日期',
@@ -59,14 +69,25 @@ const formSchema={
         }
       },
       rules:{
-        required:true,
-        customRule:{
-          script:'dx:{{$root.end}} < {{$root.start}}',
-          errMsg:'结束日期要在开始日期之前'
-        }
+        required:{
+          value:true,
+          errMsg:'必填'
+        },
+        customRule:[
+          {
+            script:'dx:!{{$root.kaishiriqi}} || {{$root.jieshuriqi}} >= {{$root.kaishiriqi}}',
+            errMsg:'结束日期必须大于等于开始日期',
+            linkItems:[
+              {
+                fieldPath:'kaishiriqi',
+                customRuleIdx:0
+              }
+            ]
+          }
+        ]
       }
     },
-    chanpin:{
+    chanpins:{
       type:'array',
       items:{
         type:'object',
@@ -81,13 +102,13 @@ const formSchema={
                 filterable:true,
                 filterLocal:true,
                 itemValueField: 'id',
-                itemLabelField: 'name',
+                itemLabelField: 'formdata.name',
                 enumSourceRemote: {
-                  remoteUrl: 'http://x.waiqin.co/api/dongke/pinxiang',
+                  remoteUrl: 'http://x.waiqin.co/api/sku/list',
                   paramName: 'keyword',
-                  resField: 'data',
+                  resField: '',
                   otherParams:{},
-                  selectFirstitem: true,//是否选中第一项
+                  selectFirstitem: true,
                   withAuthorization:true,
                 }
               }
@@ -99,19 +120,25 @@ const formSchema={
               }
             }
           },
-          count:{
+          shuliang:{
             type:'number',
             ui:{
                 label:'数量',
                 readonly:'dx:{{$const.mode}}=="view"',
                 widget:'mm-number',
                 widgetConfig:{
-                step:1,
-                min:Number.NEGATIVE_INFINITY
+                  step:1,
+                  min:Number.NEGATIVE_INFINITY
                 }
             },
             rules: {
-                required:true,
+              required:true,
+              customRule:[
+                {
+                  script:'dx:{{$root.chanpins[i].shuliang}}!=0',
+                  errMsg:'数量不能为0'
+                }
+              ]
             }
           },
           danwei:{
@@ -123,14 +150,14 @@ const formSchema={
               widgetConfig:{
                 filterable:true,
                 filterLocal:true,
-                itemValueField: 'key',
-                itemLabelField: 'value',
+                itemValueField: 'id',
+                itemLabelField: 'name',
                 enumSourceRemote: {
-                  remoteUrl: 'http://rap2api.taobao.org/app/mock/105585/options',
+                  remoteUrl: 'http://x.waiqin.co/api/sku',
                   paramName: 'keyword',
-                  resField: 'options',
-                  otherParams:{unit:'dx:{{$root.gonghuodanwei}}'},//TODO:dx表达式
-                  selectFirstitem: true,//是否选中第一项
+                  resField: 'formdata.units',
+                  otherParams:{id:'dx:{{$root.chanpins[i].chanpingming}}'},
+                  selectFirstitem: true,
                   withAuthorization:true,
                 }
               }
@@ -144,22 +171,16 @@ const formSchema={
           },
         },
         ui:{
-          label:'品项'
+          label:'产品'
         }
       },
       ui:{
-        label:'产品',
-        legend:'产品表',
+        label:'',
+        legend:'产品',
         readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-array',
         widgetConfig:{
           collapsed:false
-        }
-      },
-      rules:{
-        required:{
-          value:true,
-          errMsg:'必填'
         }
       }
     },
@@ -170,18 +191,35 @@ const formSchema={
     }
   }
 };
+
+var data={
+  shoudianmingchen:{
+    id:1,
+    name:'ceshi'
+  },
+  kaishiriqi:1542607907000,
+  jieshuriqi:1542607907000,
+  chanpins:[
+    {
+      chanpingming:'1',
+      shuliang:2,
+      danwei:'1'
+    }
+  ]
+};
 export default {
   data () {
     return {
       isSchemaChanging:false,
-      formSchema: {},
+      xiaohuoSchema: {},
       systemSchemaId:1,
       systemSchemaVersion:0
     }
   },
   created(){
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
-    this.formSchema=formSchema;
+    this.xiaohuoSchema=formSchema;
+    this.xiaohuoSchema.value=data;
     this.isSchemaChanging=true;
     //custom.setAuth(this.Utils.Local.get('token'));
     //this.getSchema();
@@ -197,7 +235,8 @@ export default {
         console.log(res.schema);
         _this.systemSchemaId=res.systemSchemaId;
         _this.systemSchemaVersion=res.systemSchemaVersion;
-        _this.formSchema=res.schema;
+        _this.xiaohuoSchema=res.schema;
+        _this.xiaohuoSchema.value=data;
         _this.isSchemaChanging=true;
       },err=>{
         if(err.body){
@@ -209,35 +248,15 @@ export default {
     },
     submit () {
       let _this=this;
-      this.$ncformValidate('formSchema').then(data => {
+      this.$ncformValidate('xiaohuoSchema').then(data => {
         if (data.result) {
-          let formdata=this.$data.formSchema.value;
-          formdata.location={
-            lat:0,
-            lng:0,
-            address:''
-          };
-          let params={
-            systemSchemaId:_this.systemSchemaId,
-            systemSchemaVersion:_this.systemSchemaVersion,
-            systemCreatorUserId:"210000",
-            formData:formdata
-          };
-          callApi(dformApi,'createFormdata',params).then(res=>{
-            _this.$toast("提交成功");
-            _this.$router.back();
-          },err=>{
-            if(err.body){
-              console.log("errorBody:",err.body);
-            }else{
-              tools.dealError(_this,err);
-            }
-          })
+          let formdata=this.$data.xiaohuoSchema.value;
+          console.log(formdata);
         }
       })
     },
     setValue(){
-      this.formSchema.value=data;
+      this.xiaohuoSchema.value=data;
     }
   }
 }
@@ -247,4 +266,8 @@ export default {
   box-sizing border-box
   width 100%
   padding .5rem
+  .btns
+    margin-top 1rem
+    .van-button
+      margin-bottom 0.8rem
 </style>

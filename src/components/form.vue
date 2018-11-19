@@ -1,13 +1,13 @@
 <template>
   <div class="input-box">
-    <ncform v-if="isSchemaChanging" :form-schema="formSchema" form-name="formSchema" v-model="formSchema.value"></ncform>
+    <ncform  v-if="isSchemaChanging" :form-schema="formSchema" :form-name="formSchema" v-model="formSchema.value"></ncform>
     <van-button size="small" @click="submit()">Submit</van-button>
     <van-button size="small" @click="setValue()">setValue</van-button>
   </div>
 </template>
 <script>
 import "@/mmform/index";
-//import { dformApi,custom,callApi } from "@/server/swagger";
+import { dformApi,custom,callApi } from "@/server/swagger";
 const formSchema={
   type: 'object',
   properties: {

@@ -86,4 +86,6 @@ export default {
 <style scoped lang="stylus">
 .foreign
   padding 10px 0
+  .van-field
+    background-color #d8dce5
 </style>

@@ -1,17 +1,19 @@
 <template>
   <div class="input-box">
-    <ncform v-if="isSchemaChanging" :form-schema="formSchema" form-name="formSchema" v-model="formSchema.value"></ncform>
-    <van-button size="small" @click="submit()">Submit</van-button>
-    <van-button size="small" @click="setValue()">setValue</van-button>
+    <ncform v-if="isSchemaChanging" :form-schema="customSchema" form-name="customSchema" v-model="customSchema.value"></ncform>
+    <div class="btns">
+      <van-button size="large" type="primary" @click="submit()">Submit</van-button>
+      <van-button size="large" type="primary" @click="setValue()">setValue</van-button>
+    </div>
   </div>
 </template>
 <script>
 import "@/mmform/index";
-//import { dformApi,custom,callApi } from "@/server/swagger";
+import { dformApi,custom,callApi } from "@/server/swagger";
 const formSchema={
   type: 'object',
   properties: {
-    name:{
+    shoudianmingchen:{
       type:'string',
       ui:{
         label:'售点名称',
@@ -25,7 +27,7 @@ const formSchema={
         }
       }
     },
-    address: {
+    dizhixinxi: {
       type: 'string',
       ui: {
         label:'地址信息',
@@ -42,7 +44,7 @@ const formSchema={
         }
       }
     },
-    detailAddress:{
+    xiangxidizhi:{
       type:'string',
       ui:{
         label:'详细地址',
@@ -55,7 +57,7 @@ const formSchema={
         }
       }
     },
-    telphone:{
+    lianxidianhua:{
       type:'string',
       ui:{
         label:'联系电话',
@@ -72,7 +74,7 @@ const formSchema={
         }
       }
     },
-    location:{
+    weizhixinxi:{
       type:'Object',
       ui:{
         label:'位置信息',
@@ -83,7 +85,7 @@ const formSchema={
         }
       }
     },
-    sellingPointType:{
+    shoudianleixing:{
       type:'string',
       ui:{
         label:'售点类型',
@@ -105,7 +107,7 @@ const formSchema={
         }
       }
     },
-    sellingPointOwner:{
+    shoudianguishu:{
       type:'string',
       ui:{
         label:'售点归属',
@@ -119,7 +121,7 @@ const formSchema={
             },
             {
               value:'dealer',
-              label:'dealer'
+              label:'经销商下线'
             }
           ]
         }
@@ -131,7 +133,7 @@ const formSchema={
         }
       }
     },
-    upstreamUnit:{
+    shangyoudanwei:{
       type:'string',
       ui:{
         label:'上游单位',
@@ -142,10 +144,10 @@ const formSchema={
           itemValueField: 'id',
           itemLabelField: 'name',
           enumSourceRemote: {
-            remoteUrl: 'http://x.waiqin.co/api/dongke/filterUpstreamUnit',
+            remoteUrl: 'http://x.waiqin.co/api/dongke/shangyoudanwei',
             paramName: 'keyword',
-            resField: 'data',
-            otherParams:{sellingPointOwner:'dx:{{$root.sellingPointOwner}}'},
+            resField: '',
+            otherParams:{shoudianguishu:'dx:{{$root.shoudianguishu}}'},
             selectFirstitem: true,
             withAuthorization:true,
           }
@@ -158,12 +160,12 @@ const formSchema={
         }
       }
     },
-    sellingItem:{
+    pinxiangs:{
       type:'array',
       items:{
         type:'object',
         properties:{
-          pingxiang:{
+          pinxiang:{
             type:'string',
             ui:{
               label:'品项选择',
@@ -173,13 +175,13 @@ const formSchema={
                 filterable:true,
                 filterLocal:true,
                 itemValueField: 'id',
-                itemLabelField: 'name',
+                itemLabelField: 'formdata.name',
                 enumSourceRemote: {
-                  remoteUrl: 'http://x.waiqin.co/api/dongke/pinxiang',
+                  remoteUrl: 'http://x.waiqin.co/api/sku/list',
                   paramName: 'keyword',
-                  resField: 'data',
+                  resField: '',
                   otherParams:{},
-                  selectFirstitem: true,//是否选中第一项
+                  selectFirstitem: true,
                   withAuthorization:true,
                 }
               }
@@ -197,22 +199,16 @@ const formSchema={
         }
       },
       ui:{
-        label:'售点品项',
-        legend:'售点品项表',
+        label:'',
+        legend:'售点品项',
         readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-array',
         widgetConfig:{
           collapsed:false
         }
-      },
-      rules:{
-        required:{
-          value:true,
-          errMsg:'必填'
-        }
       }
     },
-    cooperation:{
+    hezuozhuangtai:{
       type:'boolean',
       value:true,
       ui:{
@@ -224,7 +220,7 @@ const formSchema={
         }
       }
     },
-    authentication:{
+    yanzhengbiaoji:{
       type:'boolean',
       value:false,
       ui:{
@@ -245,36 +241,43 @@ const formSchema={
 };
 
 var data={
-  name:'cdcd',
-  address:'110101',
-  detailAddress:'xx街道',
-  telphone:'13465237192',
-  location:{
+  shoudianmingchen:'cdcd',
+  dizhixinxi:'110101',
+  xiangxidizhi:'xx街道',
+  lianxidianhua:'13465237192',
+  weizhixinxi:{
     lng:121.406051,
     lat:31.179695,
     address:'钦汇园'
   },
-  sellingPointType:"B",
-  sellingPointOwner:"dealer",
-  upstreamUnit:'1',
-  sellingItem:'2',
-  cooperation:true,
-  authentication:true
+  shoudianleixing:"BC",
+  shoudianguishu:"dealer",
+  shangyoudanwei:'d:1',
+  pinxiangs:[
+    {
+      pingxiang:1
+    },
+    {
+      pingxiang:2
+    }
+  ],
+  hezuozhuangtai:true,
+  yanzhengbiaoji:true
 };
 export default {
   data () {
     return {
       isSchemaChanging:false,
-      formSchema: {},
+      customSchema: {},
       systemSchemaId:1,
       systemSchemaVersion:0
     }
   },
   created(){
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
-    this.formSchema=formSchema;
+    this.customSchema=formSchema;
     this.isSchemaChanging=true;
-    //custom.setAuth(this.Utils.Local.get('token'));
+    custom.setAuth(this.Utils.Local.get('token'));
     //this.getSchema();
   },
   methods: {
@@ -288,7 +291,7 @@ export default {
         console.log(res.schema);
         _this.systemSchemaId=res.systemSchemaId;
         _this.systemSchemaVersion=res.systemSchemaVersion;
-        _this.formSchema=res.schema;
+        _this.customSchema=res.schema;
         _this.isSchemaChanging=true;
       },err=>{
         if(err.body){
@@ -300,20 +303,18 @@ export default {
     },
     submit () {
       let _this=this;
-      this.$ncformValidate('formSchema').then(data => {
+      this.$ncformValidate('customSchema').then(data => {
         if (data.result) {
-          let formdata=this.$data.formSchema.value;
-          formdata.location={
-            lat:0,
-            lng:0,
-            address:''
-          };
+          let formdata=this.$data.customSchema.value;
+          console.log(formdata);
           let params={
             systemSchemaId:_this.systemSchemaId,
             systemSchemaVersion:_this.systemSchemaVersion,
             systemCreatorUserId:"210000",
             formData:formdata
           };
+          console.log(formdata);
+          /*
           callApi(dformApi,'createFormdata',params).then(res=>{
             _this.$toast("提交成功");
             _this.$router.back();
@@ -323,12 +324,12 @@ export default {
             }else{
               tools.dealError(_this,err);
             }
-          })
+          })*/
         }
       })
     },
     setValue(){
-      this.formSchema.value=data;
+      this.customSchema.value=data;
     }
   }
 }
@@ -338,4 +339,8 @@ export default {
   box-sizing border-box
   width 100%
   padding .5rem
+  .btns
+    margin-top 1rem
+    .van-button
+      margin-bottom 0.8rem
 </style>

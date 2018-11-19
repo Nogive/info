@@ -1,32 +1,30 @@
 <template>
   <div class="input-box">
-    <ncform v-if="isSchemaChanging" :form-schema="formSchema" form-name="formSchema" v-model="formSchema.value"></ncform>
-    <van-button size="small" @click="submit()">Submit</van-button>
-    <van-button size="small" @click="setValue()">setValue</van-button>
+    <ncform v-if="isSchemaChanging" :form-schema="visitationSchema" form-name="visitationSchema" v-model="visitationSchema.value"></ncform>
+    <div class="btns">
+      <van-button size="large" type="primary" @click="submit()">Submit</van-button>
+      <van-button size="large" type="primary" @click="setValue()">setValue</van-button>
+    </div>
   </div>
 </template>
 <script>
 import "@/mmform/index";
-//import { dformApi,custom,callApi } from "@/server/swagger";
+import { dformApi,custom,callApi } from "@/server/swagger";
 const formSchema={
   type: 'object',
   properties: {
-    shoudian:{
+    shoudianmingchen:{
       type:'Object',
-      value:{
-        id:1,
-        name:'ceshi'
-      },
       ui:{
         label:'售点名称',
         readonly:true,
         widget:'mm-foreign-object',
         widgetConfig:{
-          itemLabelField:'value',
-          remoteUrl: 'http://rap2api.taobao.org/app/mock/105585/options',//远程请求的地址
+          itemLabelField:'name',
+          remoteUrl: 'http://x.waiqin.co/api/custom/search',//远程请求的地址
           paramName: 'keyword',
-          resField: 'options',
-          otherParams:{id:'dx:{{$root.name.id}}'},
+          resField: 'data',
+          otherParams:{id:'dx:{{$root.shoudianmingchen.id}}'},
           withAuthorization:true,
         }
       }
@@ -57,34 +55,34 @@ const formSchema={
       }
     },
     pingxiang:{
-        type:'string',
-        ui:{
-            label:'售点品项',
-            readonly:'dx: {{$const.mode}}=="view"',
-            widget:'mm-select',
-            widgetConfig:{
-            filterable:true,
-            filterLocal:true,
-            itemValueField: 'id',
-            itemLabelField: 'name',
-            enumSourceRemote: {
-                remoteUrl: 'http://x.waiqin.co/api/dongke/pinxiang',
-                paramName: 'keyword',
-                resField: 'data',
-                otherParams:{},
-                selectFirstitem: true,//是否选中第一项
-                withAuthorization:true,
-            }
-            }
-        },
-        rules:{
-            required:{
-            value:true,
-            errMsg:'必填'
-            }
+      type:'string',
+      ui:{
+        label:'售点品项',
+        readonly:'dx: {{$const.mode}}=="view"',
+        widget:'mm-select',
+        widgetConfig:{
+          filterable:true,
+          filterLocal:true,
+          itemValueField: 'id',
+          itemLabelField: 'formdata.name',
+          enumSourceRemote: {
+            remoteUrl: 'http://x.waiqin.co/api/sku/list',
+            paramName: 'keyword',
+            resField: '',
+            otherParams:{},
+            selectFirstitem: true,
+            withAuthorization:true,
+          }
         }
+      },
+      rules:{
+        required:{
+          value:true,
+          errMsg:'必填'
+        }
+      }
     },
-    cooperation:{
+    hezuozhuangtai:{
       type:'boolean',
       value:true,
       ui:{
@@ -96,7 +94,7 @@ const formSchema={
         }
       }
     },
-    message:{
+    hezuoqingkuangzongshu:{
       type:'string',
       ui:{
         label:'合作情况综述',
@@ -124,34 +122,33 @@ const formSchema={
 };
 
 var data={
-  name:'cdcd',
-  address:'110101',
-  detailAddress:'xx街道',
-  telphone:'13465237192',
-  location:{
-    lng:121.406051,
-    lat:31.179695,
-    address:'钦汇园'
+  shoudianmingchen:{
+    id:1,
+    name:'ceshi'
   },
-  sellingPointType:"B",
-  sellingPointOwner:"dealer",
-  upstreamUnit:'1',
-  sellingItem:'2',
-  cooperation:true,
-  authentication:true
+  qiandao:{
+    lat:0,
+    lng:0,
+    address:''
+  },
+  zhaopian:[],
+  pinxiang:'1',
+  hezuozhuangtai:false,
+  hezuoqingkuangzongshu:'geiheieh'
 };
 export default {
   data () {
     return {
       isSchemaChanging:false,
-      formSchema: {},
+      visitationSchema: {},
       systemSchemaId:1,
       systemSchemaVersion:0
     }
   },
   created(){
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
-    this.formSchema=formSchema;
+    this.visitationSchema=formSchema;
+    this.visitationSchema.value=data;
     this.isSchemaChanging=true;
     //custom.setAuth(this.Utils.Local.get('token'));
     //this.getSchema();
@@ -167,7 +164,8 @@ export default {
         console.log(res.schema);
         _this.systemSchemaId=res.systemSchemaId;
         _this.systemSchemaVersion=res.systemSchemaVersion;
-        _this.formSchema=res.schema;
+        _this.visitationSchema=res.schema;
+        _this.visitationSchema=data;
         _this.isSchemaChanging=true;
       },err=>{
         if(err.body){
@@ -179,35 +177,21 @@ export default {
     },
     submit () {
       let _this=this;
-      this.$ncformValidate('formSchema').then(data => {
+      this.$ncformValidate('visitationSchema').then(data => {
         if (data.result) {
-          let formdata=this.$data.formSchema.value;
-          formdata.location={
-            lat:0,
-            lng:0,
-            address:''
-          };
+          let formdata=this.$data.visitationSchema.value;
           let params={
             systemSchemaId:_this.systemSchemaId,
             systemSchemaVersion:_this.systemSchemaVersion,
             systemCreatorUserId:"210000",
             formData:formdata
           };
-          callApi(dformApi,'createFormdata',params).then(res=>{
-            _this.$toast("提交成功");
-            _this.$router.back();
-          },err=>{
-            if(err.body){
-              console.log("errorBody:",err.body);
-            }else{
-              tools.dealError(_this,err);
-            }
-          })
+          console.log(formdata);
         }
       })
     },
     setValue(){
-      this.formSchema.value=data;
+      this.visitationSchema.value=data;
     }
   }
 }
@@ -217,4 +201,8 @@ export default {
   box-sizing border-box
   width 100%
   padding .5rem
+  .btns
+    margin-top 1rem
+    .van-button
+      margin-bottom 0.8rem
 </style>
