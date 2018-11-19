@@ -65,7 +65,7 @@ const formSchema={
                 enumSourceRemote: {
                   remoteUrl: 'http://x.waiqin.co/api/sku/list',
                   paramName: 'keyword',
-                  resField: 'data',
+                  resField: '',
                   otherParams:{},
                   selectFirstitem: true,
                   withAuthorization:true,
@@ -115,7 +115,7 @@ const formSchema={
                   remoteUrl: 'http://x.waiqin.co/api/sku',
                   paramName: 'keyword',
                   resField: 'formdata.units',
-                  otherParams:{unit:'dx:{{$root.chanpins[i].chanpingming}}'},
+                  otherParams:{id:'dx:{{$root.chanpins[i].chanpingming}}'},
                   selectFirstitem: true,
                   withAuthorization:true,
                 }
