@@ -54,32 +54,77 @@ export function takePhotoByDing(watermark) {
       sceneId:string 定位场景ID
     }
  */
-export function onLocationByDing() {
+var errCode = {
+  noGps: 1,
+  default: 2
+};
+export function onLocationByDing(accuracy) {
+  console.log("prepare to location");
   var sceneId = "ding";
-  var results = [];
-  return new Promise((resolve, reject) => {
-    dd.device.geolocation.start({
-      targetAccuracy: 100, // 期望精确度
-      iOSDistanceFilter: 100, // 变更感知精度(iOS端参数)
-      useCache: true, // 是否使用缓存(Android端参数)
-      withReGeocode: true, // 是否返回逆地理信息,默认否
-      callBackInterval: 200, //回传时间间隔，ms
-      sceneId: sceneId, // 定位场景id,
-      onSuccess: function(result) {
-        if (results.length < 5) {
-          results.push(result);
-        } else {
-          stopDingLocate(result.sceneId);
-          results.sort((a, b) => {
-            return a - b;
-          });
-          resolve(results[0]);
+  var location;
+  return Promise.race([
+    new Promise((resolve, reject) => {
+      dd.device.geolocation.start({
+        targetAccuracy: 100, // 期望精确度
+        iOSDistanceFilter: 10, // 变更感知精度(iOS端参数)
+        useCache: true, // 是否使用缓存(Android端参数)
+        withReGeocode: true, // 是否返回逆地理信息,默认否
+        callBackInterval: 200, //回传时间间隔，ms
+        sceneId: sceneId, // 定位场景id,
+        onSuccess: function(result) {
+          console.log("location gotten,", result);
+          if (result.resultCode == 4) {
+            let e = new Error();
+            e.code = errCode.noGps;
+            e.message = "定位失败，请检查GPS是否打开，或到空旷的地方重新定位";
+            reject(e);
+          } else {
+            if (result.accuracy <= accuracy) {
+              stopDingLocate(result.sceneId);
+              resolve(result);
+            } else {
+              if (!location) {
+                location = result;
+              }
+              if (result.accuracy < location.accuracy) {
+                location = result;
+              }
+            }
+          }
+        },
+        onFail: function(err) {
+          let e = new Error();
+          e.code = errCode.default;
+          e.message = "定位失败，请检查GPS是否打开，或到空旷的地方重新定位";
+          e.err = err;
+          reject(e);
         }
-      },
-      onFail: function(err) {
-        reject(err);
+      });
+    }),
+    new Promise((resolve, reject) => {
+      var timer = null;
+      timer = setTimeout(function() {
+        if (location) {
+          stopDingLocate(sceneId);
+          resolve(location);
+        } else {
+          reject("timeout");
+        }
+      }, 15000);
+    })
+  ]);
+}
+function locateTimeout(sceneId) {
+  new Promise((resolve, reject) => {
+    var timer = null;
+    timer = setTimeout(function() {
+      if (location) {
+        stopDingLocate(sceneId);
+        resolve(location);
+      } else {
+        reject("timeout");
       }
-    });
+    }, 15000);
   });
 }
 function stopDingLocate(sceneId) {

@@ -2,8 +2,8 @@
   <div class="input-box">
     <ncform v-if="isSchemaChanging" :form-schema="customSchema" form-name="customSchema" v-model="customSchema.value"></ncform>
     <div class="btns">
-      <van-button size="large" type="primary" @click="submit()">Submit</van-button>
-      <van-button size="large" type="primary" @click="setValue()">setValue</van-button>
+      <van-button size="large" type="primary" @click="submit()">提交</van-button>
+      <!-- <van-button size="large" type="primary" @click="setValue()">setValue</van-button> -->
     </div>
   </div>
 </template>
