@@ -8,8 +8,11 @@
   </div>
 </template>
 <script>
-import "@/mmform/index";
 import { customApi,custom,callApi } from "@/server/swagger";
+import "@/mmform/index";
+
+import baseSchemaEditPage from "@/components/base/baseSchemaEditPage";
+
 const formSchema={
   type: 'object',
   properties: {
@@ -264,7 +267,10 @@ var data={
   hezuozhuangtai:true,
   yanzhengbiaoji:true
 };
+
 export default {
+  extends:baseSchemaEditPage,
+  name:'custom',
   data () {
     return {
       isSchemaChanging:false,
@@ -275,19 +281,12 @@ export default {
   },
   created(){
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
-    //this.customSchema=formSchema;
-    //this.isSchemaChanging=true;
     custom.setAuth(this.Utils.Local.get('token'));
-    this.getSchema();
   },
   methods: {
-    getSchema(){
+    init(){
       let _this=this;
-      var opts={
-        mode:'edit'
-      }
-      callApi(customApi,'getCustomSchema',opts).then(res=>{
-        console.log(res.schema);
+      callApi(customApi,'getCustomSchema',{mode:'edit'}).then(res=>{
         _this.systemSchemaId=res.systemSchemaId;
         _this.systemSchemaVersion=res.systemSchemaVersion;
         _this.customSchema=res.schema;
@@ -312,8 +311,7 @@ export default {
             systemCreatorUserId:"210000",
             formData:formdata
           };
-          console.log(formdata);
-          /*
+          console.log(params);
           callApi(customApi,'createCustomData',params).then(res=>{
             _this.$toast("提交成功");
             _this.$router.back();
@@ -323,7 +321,7 @@ export default {
             }else{
               tools.dealError(_this,err);
             }
-          })*/
+          })
         }
       })
     },
