@@ -9,7 +9,7 @@
 </template>
 <script>
 import "@/mmform/index";
-import { dformApi,custom,callApi } from "@/server/swagger";
+import { customApi,custom,callApi } from "@/server/swagger";
 const formSchema={
   type: 'object',
   properties: {
@@ -275,19 +275,18 @@ export default {
   },
   created(){
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
-    this.customSchema=formSchema;
-    this.isSchemaChanging=true;
+    //this.customSchema=formSchema;
+    //this.isSchemaChanging=true;
     custom.setAuth(this.Utils.Local.get('token'));
-    //this.getSchema();
+    this.getSchema();
   },
   methods: {
     getSchema(){
       let _this=this;
       var opts={
-        id:1,
         mode:'edit'
       }
-      callApi(dformApi,'getSchema',opts).then(res=>{
+      callApi(customApi,'getCustomSchema',opts).then(res=>{
         console.log(res.schema);
         _this.systemSchemaId=res.systemSchemaId;
         _this.systemSchemaVersion=res.systemSchemaVersion;
@@ -315,7 +314,7 @@ export default {
           };
           console.log(formdata);
           /*
-          callApi(dformApi,'createFormdata',params).then(res=>{
+          callApi(customApi,'createCustomData',params).then(res=>{
             _this.$toast("提交成功");
             _this.$router.back();
           },err=>{

@@ -7,7 +7,7 @@
 </template>
 <script>
 import "@/mmform/index";
-import { dformApi,custom,callApi } from "@/server/swagger";
+import {custom,callApi } from "@/server/swagger";
 const formSchema={
   type: 'object',
   properties: {

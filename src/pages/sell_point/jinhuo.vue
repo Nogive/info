@@ -177,7 +177,6 @@ const formSchema={
     }
   }
 };
-
 var data={
   shoudianmingchen:{
     id:1,
@@ -193,6 +192,7 @@ var data={
   //   }
   // ]
 };
+
 export default {
   data () {
     return {
@@ -204,11 +204,10 @@ export default {
   },
   created(){
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
-    this.jinhuoSchema=formSchema;
-    //this.jinhuoSchema.value=data;
-    this.isSchemaChanging=true;
-    //custom.setAuth(this.Utils.Local.get('token'));
-    //this.getSchema();
+    // this.jinhuoSchema=formSchema;
+    // this.isSchemaChanging=true;
+    custom.setAuth(this.Utils.Local.get('token'));
+    this.getSchema();
   },
   methods: {
     getSchema(){
@@ -244,6 +243,15 @@ export default {
             formData:formdata
           };
           console.log(formdata);
+          callApi(dformApi,'createFormdata',params).then(res=>{
+            console.log(res);
+          },err=>{
+            if(err.body){
+              console.log("errorBody:",err.body);
+            }else{
+              tools.dealError(_this,err);
+            }
+          })
         }
       })
     },

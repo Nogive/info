@@ -7,24 +7,49 @@ const XFieldApi = require("x_field_api");
 /*---------------------API--------------------------------------------- */
 //ddApi
 export var ddApi = new XFieldApi.DingApi();
+
+//进货、销货、库存
 export var dformApi = new XFieldApi.DformApi();
+
+//custom visitation
+export var customApi = new XFieldApi.CustomApi();
 
 //dingApi里面的参数
 const apiParams = {
   createMicroapp: function(body) {
     return new XFieldApi.DingAppRequest.constructFromObject(body);
   },
+  //获取钉钉激活认证的配置参数
   dingConfig: function(url) {
     return url;
   },
+  //钉钉免登
   dingGetuserinfo: function(body) {
     return new XFieldApi.DingSsoRequest.constructFromObject(body);
   },
+  //custom schema
+  getCustomSchema: function(opts) {
+    return opts;
+  },
+  //custom formdata
+  createCustomData: function(body) {
+    return new XFieldApi.Formdata.constructFromObject(body);
+  },
+  //visitation schema
+  getVisitationSchema: function(opts) {
+    return opts;
+  },
+  //visitation formdata
+  createvisitationData: function(body) {
+    return new XFieldApi.Formdata.constructFromObject(body);
+  },
+  //进货、销货、库存 schema
   getSchema: function(opts) {
     return opts;
   },
+  //进货、销货、库存 formdata
   createFormdata: function(body) {
-    return new XFieldApi.CreateFormdata.constructFromObject(body);
+    return new XFieldApi.Formdata.constructFromObject(body);
   }
 };
 /**
