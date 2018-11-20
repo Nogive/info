@@ -56,7 +56,6 @@ const formSchema={
         readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-select',
         widgetConfig:{
-          filterLocal:'false',
           itemValueField: 'id',
           itemLabelField: 'name',
           enumSourceRemote: {
@@ -137,8 +136,6 @@ const formSchema={
               readonly:'dx: {{$const.mode}}=="view"',
               widget:'mm-select',
               widgetConfig:{
-                filterable:true,
-                filterLocal:true,
                 itemValueField: 'id',
                 itemLabelField: 'name',
                 enumSourceRemote: {

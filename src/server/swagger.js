@@ -3,6 +3,8 @@
  * @example callApi(ddApi,'dingGetuserinfo',params).then(res=>{},err=>{})
  */
 import tools from "@/common/js/tool";
+import Utils from "@/utils";
+var vm = new Vue();
 const XFieldApi = require("x_field_api");
 /*---------------------API--------------------------------------------- */
 //ddApi
@@ -73,6 +75,7 @@ export var custom = {
  * @return promise对象
  */
 export function callApi(apiInstance, api, param) {
+  Utils.loading(vm, true);
   return new Promise((resolve, reject) => {
     if (param) {
       let body = apiParams[api](param);
@@ -83,6 +86,7 @@ export function callApi(apiInstance, api, param) {
         } else {
           resolve(data);
         }
+        Utils.loading(vm, false);
       });
     } else {
       apiInstance[api]((error, data, res) => {
@@ -91,6 +95,7 @@ export function callApi(apiInstance, api, param) {
         } else {
           resolve(data);
         }
+        Utils.loading(vm, false);
       });
     }
   });

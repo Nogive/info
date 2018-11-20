@@ -143,7 +143,6 @@ const formSchema={
         readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-select',
         widgetConfig:{
-          filterLocal:'false',
           itemValueField: 'id',
           itemLabelField: 'name',
           enumSourceRemote: {
@@ -291,6 +290,7 @@ export default {
         _this.systemSchemaVersion=res.systemSchemaVersion;
         _this.customSchema=res.schema;
         _this.isSchemaChanging=true;
+        this.Utils.loading(_this,false);
       },err=>{
         if(err.body){
           console.log("errorBody:",err.body);
