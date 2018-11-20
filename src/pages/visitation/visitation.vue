@@ -8,7 +8,10 @@
   </div>
 </template>
 <script>
+import { customApi,custom,callApi } from "@/server/swagger";
 import "@/mmform/index";
+import baseSchemaEditPage from "@/components/base/baseSchemaEditPage";
+
 const formSchema={
   type: 'object',
   properties: {
@@ -22,7 +25,7 @@ const formSchema={
           itemLabelField:'name',
           remoteUrl: 'http://x.waiqin.co/api/custom/search',//远程请求的地址
           paramName: 'keyword',
-          resField: 'data',
+          resField: '',
           otherParams:{id:'dx:{{$root.shoudianmingchen.id}}'},
           withAuthorization:true,
         }
@@ -119,23 +122,24 @@ const formSchema={
     }
   }
 };
-
 var data={
   shoudianmingchen:{
-    id:1,
+    id:4,
     name:'ceshi'
   },
-  qiandao:{
-    lat:0,
-    lng:0,
-    address:''
-  },
-  zhaopian:[],
-  pinxiang:'1',
-  hezuozhuangtai:false,
-  hezuoqingkuangzongshu:'geiheieh'
+  // qiandao:{
+  //   lat:0,
+  //   lng:0,
+  //   address:''
+  // },
+  // zhaopian:[],
+  // pinxiang:'1',
+  // hezuozhuangtai:false,
+  // hezuoqingkuangzongshu:'geiheieh'
 };
 export default {
+  extends:baseSchemaEditPage,
+  name:'visitation',
   data () {
     return {
       isSchemaChanging:false,
@@ -146,20 +150,12 @@ export default {
   },
   created(){
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
-    this.visitationSchema=formSchema;
-    this.visitationSchema.value=data;
-    this.isSchemaChanging=true;
-    //custom.setAuth(this.Utils.Local.get('token'));
-    //this.getSchema();
+    custom.setAuth(this.Utils.Local.get('token'));
   },
   methods: {
-    getSchema(){
+    init(){
       let _this=this;
-      var opts={
-        id:1,
-        mode:'edit'
-      }
-      callApi(dformApi,'getSchema',opts).then(res=>{
+      callApi(customApi,'getVisitationSchema',{mode:'edit'}).then(res=>{
         console.log(res.schema);
         _this.systemSchemaId=res.systemSchemaId;
         _this.systemSchemaVersion=res.systemSchemaVersion;

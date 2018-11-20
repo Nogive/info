@@ -23,7 +23,7 @@ const formSchema={
           itemLabelField:'name',
           remoteUrl: 'http://x.waiqin.co/api/custom/search',//远程请求的地址
           paramName: 'keyword',
-          resField: 'data',
+          resField: '',
           otherParams:{id:'dx:{{$root.shoudianmingchen.id}}'},
           withAuthorization:true,
         }

@@ -9,7 +9,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+var superagent = require('superagent');
 import ncformCommon from '@ncform/ncform-common'
 import _get from "lodash-es/get";
 import _cloneDeep from 'lodash-es/cloneDeep';
@@ -18,7 +18,11 @@ export default {
   data () {
     return {
       name:'',
-      tempVal:{}
+    }
+  },
+  created(){
+    if(this.value){
+      this.name=this.value.name;
     }
   },
   watch:{
@@ -26,14 +30,7 @@ export default {
       if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
         this.remoteMethod();
       }
-    },
-    tempVal:{
-        handler(){
-            this.name=this.tempVal.name;
-            this.modelVal=this.tempVal;
-        },
-        deep:true
-    },
+    }
   },
   computed:{
     otherParams() {
@@ -49,36 +46,29 @@ export default {
       return modelVal;
     },
     remoteMethod(query){
-        let _this=this;
-        if(!_get(this.mergeConfig, 'remoteUrl')){ return; };
-      const options = {
-        url: this.mergeConfig.remoteUrl,
-        params: JSON.parse(JSON.stringify(this.otherParams)) 
-      };
+      let _this=this;
+      if(!_get(this.mergeConfig, 'remoteUrl')){ return; };
+      var agent=superagent.agent();
       //设置请求头
       if(this.mergeConfig.withAuthorization){
-        options.headers={
-          'Authorization': JSON.parse(window.localStorage.getItem('token')),
-        }
+        agent.set('Authorization',JSON.parse(window.localStorage.getItem('token')))
       }
+      const options = {
+        url: this.mergeConfig.remoteUrl,
+        params: JSON.parse(JSON.stringify(this.otherParams))
+      };
       options.params[
         this.mergeConfig.paramName
       ] = query;
-      axios(options).then(res => {
-        let tempArr = this.mergeConfig.resField ? _get(res.data, this.mergeConfig.resField) : res.data;
-        console.log('data:',tempArr);
-        let temp=tempArr[0];
-        _this.name=temp[_this.mergeConfig.itemLabelField];
-        if(_this.value){
-            _this.tempVal.id=_this.value.id;
-        }
-        // _this.tempVal={
-        //     id:_this.value?_this.value.id:'',
-        //     name:temp[_this.mergeConfig.itemLabelField]
-        // };
-      },err=>{
-          console.log('error:',err);
-      });
+      agent.get(options.url)
+        .query(options.params)
+        .then(res=>{
+          let tempArr = this.mergeConfig.resField ? _get(res.body, this.mergeConfig.resField) : res.body;
+          _this.name=_get(tempArr,_this.mergeConfig.itemLabelField);
+          _this.modelVal=tempArr;
+        },err=>{
+          console.log(err.response);
+        })
     }
   }
 }

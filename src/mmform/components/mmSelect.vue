@@ -169,8 +169,8 @@ export default {
     }else{
       this.localSource=this.mergeConfig.enumSource;
       this.optionSource=this.mergeConfig.enumSource;
+      this._setModelVal();
     }
-    this._setModelVal();
   },
   computed:{
     showSearch:function(){//是否显示输入框
@@ -200,6 +200,9 @@ export default {
         otherParams[key] = this._analyzeVal(otherParams[key]);
       }
       return otherParams;
+    },
+    selectFirstitem(){
+      return this._analyzeVal(_get(this.mergeConfig, 'enumSourceRemote.selectFirstitem'));
     }
   },
   watch:{
@@ -286,6 +289,7 @@ export default {
           this.localSource=this.setResource(tempArr);
           this.optionSource=this.setResource(tempArr);
           this.selectFirstOption();
+          this._setModelVal();
         },err=>{
           console.log(err.response);
         })
@@ -306,7 +310,7 @@ export default {
     },
     selectFirstOption(){//选中第一项
       let isMul=this.mergeConfig.multiple?this.mergeConfig.multiple:this.defaultConfig.multiple;
-      if (this.mergeConfig.enumSourceRemote.selectFirstitem && this.optionSource.length > 0) {
+      if (this.selectFirstitem && this.optionSource.length > 0) {
         if(isMul){
           this.selectedOptions=[this.optionSource[0]];
         }else{

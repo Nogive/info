@@ -8,8 +8,11 @@
   </div>
 </template>
 <script>
-import "@/mmform/index";
 import { dformApi,custom,callApi } from "@/server/swagger";
+import "@/mmform/index";
+import tools from "@/common/js/tool"
+import baseSchemaEditPage from "@/components/base/baseSchemaEditPage";
+
 const formSchema={
   type: 'object',
   properties: {
@@ -23,7 +26,7 @@ const formSchema={
           itemLabelField:'name',
           remoteUrl: 'http://x.waiqin.co/api/custom/search',
           paramName: 'keyword',
-          resField: 'data',
+          resField: '',
           otherParams:{id:'dx:{{$root.shoudianmingchen.id}}'},
           withAuthorization:true,
         }
@@ -61,7 +64,7 @@ const formSchema={
             paramName: 'keyword',
             resField: '',
             otherParams:{},
-            selectFirstitem: true,
+            selectFirstitem: 'dx: {{$const.mode}}=="edit"',
             withAuthorization:true,
           }
         }
@@ -179,11 +182,11 @@ const formSchema={
 };
 var data={
   shoudianmingchen:{
-    id:1,
+    id:'4',
     name:'ceshi'
   },
   // jinhuoriqi:1542607907000,
-  // gonghuodanwei:'d:1',
+  //gonghuodanwei:'c:5',
   // chanpins:[
   //   {
   //     chanpingming:'1',
@@ -194,6 +197,8 @@ var data={
 };
 
 export default {
+  extends:baseSchemaEditPage,
+  name:'jinhuo',
   data () {
     return {
       isSchemaChanging:false,
@@ -204,24 +209,17 @@ export default {
   },
   created(){
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
-    // this.jinhuoSchema=formSchema;
-    // this.isSchemaChanging=true;
     custom.setAuth(this.Utils.Local.get('token'));
-    this.getSchema();
   },
   methods: {
-    getSchema(){
+    init(){
       let _this=this;
-      var opts={
-        id:101,
-        mode:'edit'
-      }
-      callApi(dformApi,'getSchema',opts).then(res=>{
-        console.log(res.schema);
+      callApi(dformApi,'getSchema',{id:101,mode:'edit'}).then(res=>{
         _this.systemSchemaId=res.systemSchemaId;
         _this.systemSchemaVersion=res.systemSchemaVersion;
         _this.jinhuoSchema=res.schema;
-        this.jinhuoSchema.value=data;
+        //for dongke
+        this.setValue();
         _this.isSchemaChanging=true;
       },err=>{
         if(err.body){
@@ -242,9 +240,9 @@ export default {
             systemCreatorUserId:"210000",
             formData:formdata
           };
-          console.log(formdata);
           callApi(dformApi,'createFormdata',params).then(res=>{
-            console.log(res);
+            _this.$toast('提交成功！');
+            _this.$router.back();
           },err=>{
             if(err.body){
               console.log("errorBody:",err.body);
