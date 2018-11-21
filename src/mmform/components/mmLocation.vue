@@ -53,18 +53,19 @@ export default {
   data () {
     let _this=this;
     return {
-      isLocate:false,
+      isLocate:false,//是否正在定位
       clearable:false,//清除按钮
       locateBtn:true,//定位按钮
+      center:[],//地图中心
+
       showMap:false,//显示地图
       startSearch:false,//开始搜索
       address:'',//地址
-      center:[],
       lat:0,//纬度
       lng:0,//精度
-      tipRes:[],
+      tipRes:[],//搜索  待选点
       defaultConfig:{
-        drag:false,
+        drag:false,//是否支持拖拽
       }
     }
   },
@@ -77,7 +78,6 @@ export default {
         this.address=this.value.address;
         this.lng=this.value.lng;
         this.lat=this.value.lat;
-        map.setCenter([this.lng,this.lat]);
       }
     },
     address(){
@@ -99,8 +99,13 @@ export default {
     },
     _initMap(){
       let _this=this;
+      if(this.lng==0||this.lat==0){
+        this.center=[121.473658,31.230378];//默认上海为中心
+      }else{
+        this.center=[this.lng,this.lat];
+      }
       map = new AMap.Map('mapContainer', {
-        center: [this.lng,this.lat],
+        center:this.center,
         zoom: 15,
         dragEnable:this.drag
       });
@@ -115,6 +120,9 @@ export default {
         map.addControl(geolocation);
         _this.geolocation=geolocation;
       });
+      if(map.map){//地图初始化完成
+        _this.onDrag();
+      }
     },
     onLocation(){
       this.locateBtn=false;
@@ -122,13 +130,14 @@ export default {
       this.isLocate=true;
       let _this=this;
       if(window.dd &&(window.dd.android||window.dd.ios)){
-        onLocationByDing(40).then(res=>{
+        onLocationByDing(70).then(res=>{
           console.log('endsuccess:',res);
           _this.modelVal={
             address:res.address,
             lng:res.longitude,
             lat:res.latitude
           };
+          map.setCenter([res.longitude,res.latitude]);
           _this.locateBtn=true;
           _this.isLocate=false;
         },err=>{
@@ -186,7 +195,7 @@ export default {
           }
         });
         positionPicker.on('fail', function(positionResult) {
-          console.log('拖拽出现问题，请保证网络环境，稍后重试~');
+          console.log('拖拽出现问题，请保证网络环境，稍后重试~',positionResult);
         });
         positionPicker.start();
       });
@@ -195,24 +204,10 @@ export default {
       if(this.isLocate){
         this.$toast('系统正在进行定位，请稍候再试~');
       }else{
-        this.showMap=true;
-        if(this.address==""){
-          this.$nextTick(()=>{
-            this._initMap();
-            this.onLocation();
-            this.onDrag();
-          })
-        }else{
-          this.$nextTick(()=>{
-            this._initMap();
-            this.onDrag();
-          })
-        }
-        // this.showMap=true;
-        // this.$nextTick(()=>{
-        //   this._initMap();
-        //   this.onDrag();
-        // })
+        this.showMap=true; 
+        this.$nextTick(()=>{
+          this._initMap(); 
+        })
       }
     },
     onSearch(){
@@ -241,8 +236,7 @@ export default {
         lat:item.location.lat
       };
       this.startSearch=false;
-      this._initMap();
-      this.onDrag();
+      map.setCenter([item.location.lng,item.location.lat]);
     },
     clearLocation(){
       this.modelVal={
