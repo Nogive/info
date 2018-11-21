@@ -10,8 +10,8 @@
         readonly
         @click="showMapContent">
         <div slot="icon" class="icon-wrapper">
-          <van-icon v-if="locateBtn" name="location" @click.stop="onLocation"></van-icon>
-          <van-icon v-if="clearable" name="clear" @click.stop="clearLocation"></van-icon>
+          <van-icon v-if="!readonly&&locateBtn" name="location" @click.stop="onLocation"></van-icon>
+          <van-icon v-if="!readonly&&clearable" name="clear" @click.stop="clearLocation"></van-icon>
         </div>
       </van-field >
     </van-cell-group>
@@ -71,9 +71,16 @@ export default {
   },
   mounted(){
     this._initMap();
+    if(this.value){
+        this.address=this.value.address;
+        this.lng=this.value.lng;
+        this.lat=this.value.lat;
+    }
+    console.log('init:',this.value);
   },
   watch:{
     value(){
+      console.log(this.value);
       if(this.value){
         this.address=this.value.address;
         this.lng=this.value.lng;
