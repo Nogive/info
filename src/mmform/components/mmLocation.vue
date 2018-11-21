@@ -44,7 +44,7 @@
 </template>
 <script>
 import ncformCommon from '@ncform/ncform-common'
-import {onLocationByDing,onLocationByCordova} from "./utils"
+import {onLocationByDing,cLocation,dLocation} from "./utils"
 import AMap from 'AMap'
 import AMapUI from 'AMapUI'
 var map;
@@ -134,7 +134,7 @@ export default {
       this.isLocate=true;
       let _this=this;
       if(window.dd &&(window.dd.android||window.dd.ios)){//钉钉
-        onLocationByDing(70).then(res=>{
+        dLocation.onLocation(70).then(res=>{
           console.log('endsuccess:',res);
           _this.updateMapData(res);
         },err=>{
@@ -146,7 +146,7 @@ export default {
            _this.isLocate=false;
         })
       } else if(window.device){//cordova
-        onLocationByCordova().then(res=>{
+        cLocation.onLocation(70).then(res=>{
           _this.updateMapData(res);
         },err=>{
           console.log(err);
