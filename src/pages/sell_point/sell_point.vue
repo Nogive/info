@@ -10,34 +10,37 @@
         >
           <div slot="action" @click="onSearch">搜索</div>
         </van-search>
-        <div class="sell-wrapper">
-          <van-list
-            v-model="loading"
-            :finished="finished"
-            @load="loadMore"
-          >
-            <ul class="sell-list">
-              <li class="sell-item" v-for="(item,index) in list" :key="index" @click="goCustom">
-                <div class="content">
-                  <p class="name">{{item.name}}-{{index}}</p>
-                  <p class="desc">{{item.describe}} <span class="fr dis">{{item | computeDix}}</span></p>
-                </div>
-              </li>
-            </ul>
-          </van-list>
-        </div>
+        <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+          <p>刷新次数: {{ count }}</p>
+          <div class="sell-wrapper">
+            <van-list
+              v-model="loading"
+              :finished="finished"
+              @load="loadMore"
+            >
+              <ul class="sell-list">
+                <li class="sell-item" v-for="(item,index) in list" :key="index" @click="goCustom">
+                  <div class="content">
+                    <p class="name">{{item.name}}-{{index}}</p>
+                    <p class="desc">{{item.describe}} <span class="fr dis">{{item | computeDix}}</span></p>
+                  </div>
+                </li>
+              </ul>
+            </van-list>
+          </div>
+        </van-pull-refresh>
       </van-tab>
-    <van-tab title="我能看到的售点">
-       <van-search
-          v-model="value"
-          placeholder="请输入搜索关键词"
-          show-action
-          @search="onSearch"
-        >
-          <div slot="action" @click="onSearch">搜索</div>
-        </van-search>
-      我能看到的售点
-    </van-tab>
+      <van-tab title="我能看到的售点">
+        <van-search
+            v-model="value"
+            placeholder="请输入搜索关键词"
+            show-action
+            @search="onSearch"
+          >
+            <div slot="action" @click="onSearch">搜索</div>
+          </van-search>
+        我能看到的售点
+      </van-tab>
   </van-tabs>
   </div>
 </template>
@@ -64,6 +67,8 @@ export default {
   name:'sell-point',
   data(){
     return {
+      isLoading:false,
+      count:0,
       active:0,
       loading:false,
       finished:true,
@@ -125,6 +130,13 @@ export default {
     },
     goCustom(){
       this.$router.push('/custom')
+    },
+    onRefresh(){
+      setTimeout(() => {
+        this.$toast('刷新成功');
+        this.isLoading = false;
+        this.count++;
+      }, 500);
     }
   }
 }
