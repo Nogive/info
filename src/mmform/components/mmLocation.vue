@@ -72,15 +72,13 @@ export default {
   mounted(){
     this._initMap();
     if(this.value){
-        this.address=this.value.address;
-        this.lng=this.value.lng;
-        this.lat=this.value.lat;
+      this.address=this.value.address;
+      this.lng=this.value.lng;
+      this.lat=this.value.lat;
     }
-    console.log('init:',this.value);
   },
   watch:{
     value(){
-      console.log(this.value);
       if(this.value){
         this.address=this.value.address;
         this.lng=this.value.lng;
@@ -116,7 +114,6 @@ export default {
         zoom: 15,
         dragEnable:this.drag
       });
-      //定位插件
       AMap.plugin('AMap.Geolocation', function() {
         var geolocation = new AMap.Geolocation({
           showButton:false,//是否显示定位按钮
@@ -136,17 +133,10 @@ export default {
       this.$toast('开始定位...');
       this.isLocate=true;
       let _this=this;
-      if(window.dd &&(window.dd.android||window.dd.ios)){
+      if(window.dd &&(window.dd.android||window.dd.ios)){//钉钉
         onLocationByDing(70).then(res=>{
           console.log('endsuccess:',res);
-          _this.modelVal={
-            address:res.address,
-            lng:res.longitude,
-            lat:res.latitude
-          };
-          map.setCenter([res.longitude,res.latitude]);
-          _this.locateBtn=true;
-          _this.isLocate=false;
+          _this.updateMapData(res);
         },err=>{
           if(err.err){
             console.log('endErr:',err);
@@ -155,19 +145,13 @@ export default {
            _this.locateBtn=true;
            _this.isLocate=false;
         })
-      } else if(window.device){
+      } else if(window.device){//cordova
         onLocationByCordova().then(res=>{
-          _this.modelVal={
-            address:res.address,
-            lng:res.longitude,
-            lat:res.latitude
-          };
-          _this.locateBtn=true;
-          _this.isLocate=false;
+          _this.updateMapData(res);
         },err=>{
           console.log(err);
         })
-      }else{
+      }else{//高德
         this.onLocationByGaode();
       }
     },
@@ -186,6 +170,26 @@ export default {
           _this.$toast('定位失败，请检查GPS是否打开，或到空旷的地方重新定位 错误码：3')
         }
       });
+    },
+    updateMapData(data){
+      this.modelVal={
+        address:data.address,
+        lng:data.longitude,
+        lat:data.latitude
+      };
+      map.setCenter([data.longitude,data.latitude]);
+      this.locateBtn=true;
+      this.isLocate=false;
+    },
+    showMapContent(){
+      if(this.isLocate){
+        this.$toast('系统正在进行定位，请稍候再试~');
+      }else{
+        this.showMap=true; 
+        this.$nextTick(()=>{
+          this._initMap(); 
+        })
+      }
     },
     onDrag(){
       let _this=this;
@@ -206,16 +210,6 @@ export default {
         });
         positionPicker.start();
       });
-    },
-    showMapContent(){
-      if(this.isLocate){
-        this.$toast('系统正在进行定位，请稍候再试~');
-      }else{
-        this.showMap=true; 
-        this.$nextTick(()=>{
-          this._initMap(); 
-        })
-      }
     },
     onSearch(){
       let _this=this;
