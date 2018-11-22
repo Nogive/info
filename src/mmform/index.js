@@ -11,6 +11,7 @@ import mmObject from "./components/mmObject";
 import mmArray from "./components/mmArray";
 import mmArea from "./components/mmArea";
 import mmForeignObject from "./components/mmForeignObject";
+import mmQuickArray from "./components/mmQuickArray";
 
 Vue.use(vueNcform, {
   extComponents: {
@@ -25,6 +26,7 @@ Vue.use(vueNcform, {
     mmObject,
     mmArray,
     mmArea,
-    mmForeignObject
+    mmForeignObject,
+    mmQuickArray
   }
 });
