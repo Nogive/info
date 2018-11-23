@@ -29,9 +29,6 @@
       <div v-else class="normal-item">
         <slot name="__notObjItem" :schema="dataItem.__dataSchema" :idx="idx"></slot>
       </div>
-
-      <!-- <ncform :form-schema="formSchema" :form-name="formSchemaaaa" v-model="formSchema.value" style="border:1px solid red"></ncform> -->
-
     </div>
 
     <div v-show="!mergeConfig.collapsed" class="btn-group" v-if="!hiddenBtn">
@@ -105,57 +102,10 @@
 
   import ncformCommon from '@ncform/ncform-common';
   const layoutArrayMixin = ncformCommon.mixins.vue.layoutArrayMixin;
-  //console.log(ncformCommon.mixins.vue.controlMixin);
   export default {
     mixins: [layoutArrayMixin],
     data(){
       return {
-        formSchema:{
-          type: 'object',
-          properties: {
-            xingming:{
-              type:'number',
-              ui:{
-                  label:'名称',
-                  readonly:'dx:{{$const.mode}}=="view"',
-                  widget:'mm-input',
-              },
-              rules: {
-                  required:true,
-              }
-            },
-            shuliang:{
-              type:'number',
-              ui:{
-                  label:'数量',
-                  readonly:'dx:{{$const.mode}}=="view"',
-                  widget:'mm-number',
-                  widgetConfig:{
-                  step:1,
-                  min:Number.NEGATIVE_INFINITY
-                  }
-              },
-              rules: {
-                  required:true,
-              }
-            },
-            jiage:{
-              type:'number',
-              ui:{
-                  label:'价格',
-                  readonly:'dx:{{$const.mode}}=="view"',
-                  widget:'mm-number',
-                  widgetConfig:{
-                  step:1,
-                  min:Number.NEGATIVE_INFINITY
-                  }
-              },
-              rules: {
-                  required:true,
-              }
-            },
-          }
-        }
       }
     },
     computed:{

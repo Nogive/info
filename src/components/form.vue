@@ -2,12 +2,20 @@
   <div class="input-box">
     <ncform  v-if="isSchemaChanging" :form-schema="formSchema" form-name="formSchema" v-model="formSchema.value"></ncform>
     <van-button size="small" @click="submit()">Submit</van-button>
-    <van-button size="small" @click="setValue()">setValue</van-button>
+    <van-button size="small" @click="addItem()">add</van-button>
   </div>
 </template>
 <script>
 import "@/mmform/index";
 const items={
+  id:{
+    type:'string',
+    value:1,
+    ui:{
+      readonly:true,
+      widget:'mm-input',
+    }
+  },
   shuliang:{
     type:'number',
     ui:{
@@ -51,9 +59,8 @@ const schema={
       ui:{
         label:'',
         legend:'内部legend',
-        showLegend:false,
         readonly:'dx: {{$const.mode}}=="view"',
-        widget:'mm-array',
+        widget:'mm-simple-array',
         widgetConfig:{
           collapsed:false
         }
@@ -67,39 +74,11 @@ const schema={
   }
 }
 
-
-
-
-const formSchema={
-  type: 'object',
-  properties: {
-    quickarray:{
-      type:'object',
-      ui:{
-        label:'quickarray demo',
-        readonly:'dx: {{$const.mode}}=="view"',
-        widget:'mm-quick-array',
-        widgetConfig:{
-          legend:'quickarray lengend',//表头名称
-          title:'这里是标题', //sku描述标题
-          schema:schema,
-          collapsed:false
-        }
-      }
-    },
-  },
-  globalConfig:{
-    constants:{
-      mode:'edit'
-    }
-  }
-};
-
 export default {
   data () {
     return {
       isSchemaChanging:true,
-      formSchema: formSchema,
+      formSchema: schema,
     }
   },
   created(){
@@ -115,7 +94,17 @@ export default {
         }
       })
     },
-    setValue(){
+    addItem(){
+      let obj={
+        id:'qqq',
+        shuliang:100,
+        jiage:100,
+      };
+      let data={
+        example:[obj,obj]
+      }
+      console.log(this.formSchema.value.example);
+      //this.formSchema.value.example.push(obj);
       this.formSchema.value=data;
     }
   }

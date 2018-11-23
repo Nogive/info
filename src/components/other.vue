@@ -8,12 +8,13 @@
 <script>
 import "@/mmform/index";
 const items={
-  liuyan:{
+  id:{
     type:'string',
     ui:{
-      label:'留言',
+      label:'id',
       readonly:'dx:{{$const.mode}}=="view"',
-      widget:'mm-textarea',
+      hidden:true,
+      widget:'mm-input',
     }
   },
   shuliang:{
@@ -61,7 +62,7 @@ const schema={
         legend:'legend',
         showLegend:true,
         readonly:'dx: {{$const.mode}}=="view"',
-        widget:'mm-other-array',
+        widget:'mm-quick-array',
         widgetConfig:{
           collapsed:false
         }
@@ -75,6 +76,21 @@ const schema={
   }
 }
 
+var data={
+  example:[
+    {
+      id:'demo1',
+      jiage:2,
+      shuliang:2
+    },
+    {
+      id:'demo2',
+      jiage:3,
+      shuliang:3
+    }
+  ]
+}
+
 export default {
   data () {
     return {
@@ -83,7 +99,7 @@ export default {
     }
   },
   created(){
-    
+    //this.formSchema.value=data;
   },
   methods: {
     submit () {

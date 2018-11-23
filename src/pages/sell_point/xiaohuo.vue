@@ -9,7 +9,7 @@
 </template>
 <script>
 import "@/mmform/index";
-import { custom,callApi } from "@/server/swagger";
+//import { custom,callApi } from "@/server/swagger";
 const formSchema={
   type: 'object',
   properties: {
