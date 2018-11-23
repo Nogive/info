@@ -21,7 +21,7 @@
         @click-left="openPopup=false"
         @click-right="openPopup=false"
       />
-      <van-tabs>
+      <van-tabs v-model="active">
         <van-tab title="搜索">
           <div class="content-wrapper">
             <van-cell-group>
@@ -43,24 +43,22 @@
               <div class="content-label">
                 <label class="title">{{label.name}}</label>
                 <div class="icons">
-                  <van-icon v-if="!test" name="add-o" @click="addItem()"></van-icon>
-                  <van-icon v-else-if="checked" name="checked" :class="{checked:checked}"></van-icon>
-                  <van-icon v-else name="passed" :class="{checked:checked}"></van-icon>
-                  <van-icon name="delete" @click="delAllItems"></van-icon>
+                  <van-icon v-if="!test" name="add-o" @click="createSchema(label)"></van-icon>
+                  <van-icon v-else name="passed" :class="{checked:label.checked}" @click="label.checked=!label.checked"></van-icon>
                 </div>
               </div>
-              <!-- <div class="content-form" v-for="(dataItem, idx) in schema.value" :key="dataItem.__dataSchema.__id">
-                <div class="header">
-                  <van-icon name="close" @click="delItem(idx)"></van-icon> 
-                </div>
-                <template v-if="isNormalObjSchema(dataItem.__dataSchema)">
-                  <ncform-object :schema="dataItem.__dataSchema" :form-data="formData" :idx-chain="(idxChain ? idxChain + ',' : '') + idx" :config="dataItem.__dataSchema.ui.widgetConfig" :show-legend="false">
-                    <template v-for="(fieldSchema, fieldName) in (dataItem.__dataSchema.properties || {__notObjItem: dataItem.__dataSchema})" :slot="fieldName">
-                      <slot :name="fieldName" :schema="fieldSchema" :idx="idx"></slot>
-                    </template>
-                  </ncform-object>
-                </template>
-              </div> -->
+              <div class="content-form">
+                <!-- <ncform 
+                  :form-schema="schemaMap[label.id]" 
+                  :form-name="`schema${label.id}`" 
+                  v-model="schemaMap[label.id].value">
+                </ncform> -->
+                <ncform 
+                  :form-schema="schema" 
+                  :form-name="`schema${label.id}`" 
+                  v-model="label.value">
+                </ncform>
+              </div>
             </div>
           </div>
         </van-tab>
@@ -150,6 +148,92 @@
 </style>
 
 <script>
+  const items={
+    shuliang:{
+      type:'number',
+      ui:{
+        label:'数量',
+        readonly:'dx:{{$const.mode}}=="view"',
+        widget:'mm-number',
+        widgetConfig:{
+          step:1,
+          min:Number.NEGATIVE_INFINITY
+        }
+      },
+      rules: {
+        required:true,
+      }
+    },
+    jiage:{
+      type:'number',
+      ui:{
+        label:'价格',
+        readonly:'dx:{{$const.mode}}=="view"',
+        widget:'mm-number',
+        widgetConfig:{
+          step:1,
+          min:Number.NEGATIVE_INFINITY
+        }
+      },
+      rules: {
+        required:true,
+      }
+    },
+  };
+  const schema={
+    type:'object',
+    properties:{
+      example:{
+        type:'array',
+        items:{
+          type:'object',
+          properties:items
+        },
+        ui:{
+          label:'',
+          legend:'内部legend',
+          showLegend:false,
+          readonly:'dx: {{$const.mode}}=="view"',
+          widget:'mm-array',
+          widgetConfig:{
+            collapsed:false
+          }
+        }
+      }
+    },
+    globalConfig:{
+      constants:{
+        mode:'edit'
+      }
+    }
+  }
+  const schema2={
+    type:'object',
+    properties:{
+      example:{
+        type:'array',
+        items:{
+          type:'object',
+          properties:items
+        },
+        ui:{
+          label:'',
+          legend:'内部legend',
+          readonly:'dx: {{$const.mode}}=="view"',
+          widget:'mm-array',
+          widgetConfig:{
+            collapsed:false
+          }
+        }
+      }
+    },
+    globalConfig:{
+      constants:{
+        mode:'edit'
+      }
+    }
+  }
+
   const tabs=[
     {
       id:1,//目录id
@@ -175,36 +259,72 @@
   const skus=[
     {
       id:1,
-      name:'牛奶'
+      name:'牛奶',
+      checked:true,
+      schema:schema,
+      value:{
+        example:[
+          {
+            shuliang:0,
+            jiage:0
+          },
+          {
+            shuliang:1,
+            jiage:1
+          }
+        ]
+      }
     },
     {
       id:2,
-      name:'啤酒'
+      name:'啤酒',
+      checked:false,
+      schema:schema2,
+      value:{
+        example:[
+          {
+            shuliang:2,
+            jiage:2
+          },
+          {
+            shuliang:3,
+            jiage:3
+          }
+        ]
+      }
     },
-    {
-      id:3,
-      name:'果汁'
-    },
-    {
-      id:4,
-      name:'可乐'
-    },
-    {
-      id:5,
-      name:'椰子汁'
-    }
+    // {
+    //   id:3,
+    //   name:'果汁'
+    // },
+    // {
+    //   id:4,
+    //   name:'可乐'
+    // },
+    // {
+    //   id:5,
+    //   name:'椰子汁'
+    // }
   ];
+ 
+  const schemaMap={
+    1:schema,
+    2:schema2
+  };
   import ncformCommon from '@ncform/ncform-common';
   export default {
     mixins: [ncformCommon.mixins.vue.controlMixin],
     data(){
       return {
         test:false,
-        openPopup:true,//是否打开model
+        openPopup:true,//是否打开弹框
         tabs:tabs,//目录数组
         skus:skus,//标签数据
-        checked:true,//是否勾选
+        active:1,//当前显示哪一个标签页
+        checked:false,//是否勾选
         searchText:"",//搜索框内容
+        schemaMap:schemaMap,
+        schema:schema,
         defaultConfig:{
           legend:'quick array',
           title:'sku'
@@ -212,10 +332,11 @@
       }
     },
     created(){
-      console.log(this.config);
-      this.modelVal={
-        id:1
-      }
+      console.log(this.config.schema.value);
+      // this.modelVal={
+      //   id:1
+      // };
+      //console.log('readonly:',this.hiddenBtn);
     },
     computed:{
       hiddenBtn(){
@@ -227,6 +348,9 @@
       _processModelVal (modelVal) {
         return modelVal
       },
+      createSchema(sku){
+        console.log(sku);
+      }
     }
   }
 </script>

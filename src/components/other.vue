@@ -8,6 +8,14 @@
 <script>
 import "@/mmform/index";
 const items={
+  liuyan:{
+    type:'string',
+    ui:{
+      label:'留言',
+      readonly:'dx:{{$const.mode}}=="view"',
+      widget:'mm-textarea',
+    }
+  },
   shuliang:{
     type:'number',
     ui:{
@@ -49,11 +57,11 @@ const schema={
         properties:items
       },
       ui:{
-        label:'',
-        legend:'内部legend',
-        showLegend:false,
+        label:'label',
+        legend:'legend',
+        showLegend:true,
         readonly:'dx: {{$const.mode}}=="view"',
-        widget:'mm-array',
+        widget:'mm-other-array',
         widgetConfig:{
           collapsed:false
         }
@@ -67,39 +75,11 @@ const schema={
   }
 }
 
-
-
-
-const formSchema={
-  type: 'object',
-  properties: {
-    quickarray:{
-      type:'object',
-      ui:{
-        label:'quickarray demo',
-        readonly:'dx: {{$const.mode}}=="view"',
-        widget:'mm-quick-array',
-        widgetConfig:{
-          legend:'quickarray lengend',//表头名称
-          title:'这里是标题', //sku描述标题
-          schema:schema,
-          collapsed:false
-        }
-      }
-    },
-  },
-  globalConfig:{
-    constants:{
-      mode:'edit'
-    }
-  }
-};
-
 export default {
   data () {
     return {
       isSchemaChanging:true,
-      formSchema: formSchema,
+      formSchema: schema,
     }
   },
   created(){
@@ -109,6 +89,7 @@ export default {
     submit () {
       let _this=this;
       this.$ncformValidate('formSchema').then(data => {
+        console.log(data);
         if (data.result) {
           let formdata=this.$data.formSchema.value;
           console.log(formdata);

@@ -50,6 +50,11 @@ export default new Router({
       path: "/form",
       name: "form",
       component: () => import("@/components/form")
+    },
+    {
+      path: "/other",
+      name: "other",
+      component: () => import("@/components/other")
     }
   ]
 });
