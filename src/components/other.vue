@@ -48,6 +48,7 @@ const items={
     }
   },
 };
+const ceshi={};
 const schema={
   type:'object',
   properties:{
@@ -64,7 +65,15 @@ const schema={
         readonly:'dx: {{$const.mode}}=="view"',
         widget:'mm-quick-array',
         widgetConfig:{
-          collapsed:false
+          collapsed:false,
+          remoteURL:'',//远程地址
+          restField:'',//返回的数据的key
+          idField:'id',//返回sku的id字段
+          labelField:'formData.name',//显示的label的字段
+          groupField:'formData.group',//分类的类别
+          quickItemField:'id',//快速增加一项的字段的key 对应items hidden的keys
+          otherParams:{},
+          withAuthorization:true
         }
       }
     }
@@ -79,12 +88,12 @@ const schema={
 var data={
   example:[
     {
-      id:'demo1',
+      id:'1',
       jiage:2,
       shuliang:2
     },
     {
-      id:'demo2',
+      id:'1',
       jiage:3,
       shuliang:3
     }

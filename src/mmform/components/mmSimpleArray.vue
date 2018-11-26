@@ -101,40 +101,10 @@
         showBtns:false,
       }
     },
-    created(){
-      let vm=this;
-      this.formSchema={
-        type:'object',
-        properties:{
-          sku:{
-            type:'array',
-            items:vm.schema.items,
-            ui:{
-              label:'label',
-              legend:'legend',
-              showLegend:true,
-              readonly:'dx: {{$const.mode}}=="view"',
-              widget:'mm-array',
-              widgetConfig:{
-                collapsed:false
-              }
-            }
-          }
-        },
-        globalConfig:{
-          constants:{
-            mode:'edit'
-          }
-        }
-      }
-    },
     computed:{
       hiddenBtn(){
         return this._analyzeVal(this.schema.ui.readonly);//支持dx表达式
       }
-    },
-    created(){
-      //console.log(this.formData);
-    },
+    }
   }
 </script>
