@@ -8,7 +8,7 @@
   </div>
 </template>
 <script>
-//import { dformApi,custom,callApi } from "@/server/swagger";
+import { dformApi,custom,callApi } from "@/server/swagger";
 import "@/mmform/index";
 import tools from "@/common/js/tool"
 import baseSchemaEditPage from "@/components/base/baseSchemaEditPage";

@@ -8,7 +8,7 @@
   </div>
 </template>
 <script>
-//import { customApi,custom,callApi } from "@/server/swagger";
+import { customApi,custom,callApi } from "@/server/swagger";
 import "@/mmform/index";
 import baseSchemaEditPage from "@/components/base/baseSchemaEditPage";
 

@@ -26,8 +26,6 @@
       <div v-else class="normal-item">
         <slot name="__notObjItem" :schema="dataItem.__dataSchema" :idx="idx"></slot>
       </div>
-
-      <!-- <ncform :form-schema="formSchema" form-name="formSchemaaaa" v-model="formSchema.value" style="border:1px solid red"></ncform> -->
       <button @click="sendData">塞数据</button>
 
     </div>
