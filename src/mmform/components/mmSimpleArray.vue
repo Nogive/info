@@ -105,6 +105,12 @@
       hiddenBtn(){
         return this._analyzeVal(this.schema.ui.readonly);//支持dx表达式
       }
+    },
+    created(){
+      var values = ncformCommon.ncformUtils.getModelFromSchema(this.schema);
+      if(values[0].id == -1){
+          this.schema.value=[];
+        }
     }
   }
 </script>

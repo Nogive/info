@@ -10,10 +10,11 @@ import "@/mmform/index";
 const items={
   id:{
     type:'string',
+    value:'-1',
     ui:{
       label:'id',
       readonly:'dx:{{$const.mode}}=="view"',
-      hidden:true,
+      hidden:false,
       widget:'mm-input',
     }
   },
@@ -108,7 +109,7 @@ export default {
     }
   },
   created(){
-    //this.formSchema.value=data;
+    this.formSchema.value=data;
   },
   methods: {
     submit () {

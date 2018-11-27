@@ -70,21 +70,22 @@
                 <div class="icons">
                   <van-icon v-if="!test" name="add-o" @click="createSchema(item)"></van-icon>
                   <van-icon v-else name="passed" :class="{checked:item.checked}" @click="item.checked=!item.checked"></van-icon>
-                  <van-icon name="delete" @click="deleteAllSchema(item)"></van-icon>
-                  <i class="arrow" :class="{'pull-up': !expandItem, 'pull-down': expandItem}" @click="expandItem=!expandItem"></i>
+                  <van-icon v-show="item.value.skuKey.length>0" name="delete" @click="deleteAllSchema(item)"></van-icon>
+                  <i class="arrow" :class="{'pull-up': !item.expandItem, 'pull-down': item.expandItem}" @click="item.expandItem=!item.expandItem"></i>
                 </div>
               </div>
-              <div class="content-form" v-if="!test" v-show="expandItem">
+              <div class="content-form" v-if="item.value.skuKey.length>0" v-show="item.expandItem">
                 <ncform
+                  :ref="`schema${item.id}`"
                   :form-schema="simpleSchema" 
-                  :form-name="`schema${item.id}`" 
+                  :form-name="`schema${item.id}`"
                   v-model="item.value">
                 </ncform>
               </div>
             </div>
           </div>
         </van-tab>
-        <van-tab v-for="(tab,index) in groups" :title="tab.name" :key="index" :groupId="tab.id" :ref="`tab${index+2}`">
+        <van-tab v-for="(tab,index) in groups" :title="tab.name" :key="index" :groupKey="tab.key" :ref="`tab${index+2}`">
           <div class="content-wrapper">
             <div class="content" v-for="(item,index) in groupSkus" :key="index">
               <div class="content-label">
@@ -92,12 +93,13 @@
                 <div class="icons">
                   <van-icon v-if="!test" name="add-o" @click="createSchema(item)"></van-icon>
                   <van-icon v-else name="passed" :class="{checked:item.checked}" @click="item.checked=!item.checked"></van-icon>
-                  <van-icon name="delete"></van-icon>
-                  <i class="arrow" :class="{'pull-up': !expandItem, 'pull-down': expandItem}" @click="expandItem=!expandItem"></i>
+                  <van-icon v-show="item.value.skuKey.length>0" name="delete" @click="deleteAllSchema(item)"></van-icon>
+                  <i class="arrow" :class="{'pull-up': !item.expandItem, 'pull-down': item.expandItem}" @click="item.expandItem=!item.expandItem"></i>
                 </div>
               </div>
-              <div class="content-form" v-if="!test" v-show="expandItem">
+              <div class="content-form" v-if="item.value.skuKey.length>0" v-show="item.expandItem">
                 <ncform
+                  :ref="`simpleSchema${item.id}`"
                   :form-schema="simpleSchema" 
                   :form-name="`groupSchema_${item.id}_${tab.id}`" 
                   v-model="item.value">
@@ -210,31 +212,9 @@
 </style>
 
 <script>
-import {data} from "./data/mock"
-import {getAttrCount} from "./utils"
-
-const tabs=[
-  {
-    id:1,//目录id
-    name:'奶制品'
-  },
-  {
-    id:2,
-    name:'酒类'
-  },
-  {
-    id:3,
-    name:'果汁类'
-  },
-  {
-    id:4,
-    name:'水果'
-  },
-    {
-    id:5,
-    name:'其他'
-  }
-];
+  import {data} from "./data/mock"
+  import {getAttrCount} from "./utils"
+  import {chinese2pinyin} from "./utils/toChinese"
 
   var superagent = require('superagent');
   import _get from "lodash-es/get";
@@ -258,32 +238,39 @@ const tabs=[
 
         expandItem:true,
         active:1,//tab显示第几项
-        openPopup:true,//模态框是否显示
+        openPopup:false,//模态框是否显示
         searchText:'',//搜索关键字
       }
     },
     created(){
-      this.modelItemNum=getAttrCount(this.schema.items.properties);
       this.initMap();
+      this.modelItemNum=getAttrCount(this.schema.items.properties);
       this.setModelSchema(this.schema.items);
-      //值的操作
-      console.log('schemaValue:',this.schema.value);
-      this.schema.value=[];
+      var values = this.getFormDataFromSchema();
+      if(values[0][this.mergeConfig.quickItemField] == -1){
+        this.schema.value=[];
+      }
     },
     computed:{
       hiddenBtn(){
-        return this._analyzeVal(this.schema.ui.readonly);//支持dx表达式
+        return this._analyzeVal(this.schema.ui.readonly);
       }
     },
     methods:{
+      //获取formdata
+      getFormDataFromSchema(){
+        return ncformCommon.ncformUtils.getModelFromSchema(this.schema)
+      },
       //初始化modelschame
       setModelSchema(items){
+        let newItems=_cloneDeep(items);
+        newItems.properties[this.mergeConfig.quickItemField].ui.hidden=true;
         this.simpleSchema={
           type:'object',
           properties:{
             skuKey:{
               type:'array',
-              items:items,
+              items:newItems,
               ui:{
                 label:'',
                 legend:'legend',
@@ -306,7 +293,6 @@ const tabs=[
       //请求远程数据 并打开模态框
       openModel(){
         this.openPopup=true;
-
       },
       //远程请求
       remoteMethod(){
@@ -326,66 +312,72 @@ const tabs=[
       },
       //初始化map
       initMap(){
+        let groups=[];
         data.forEach(item=>{
           let id=_get(item,this.mergeConfig.idField);
           let label=_get(item,this.mergeConfig.labelField);
+          //TODO:  读dataform的值
           let value={
-            skuKey:[{[this.mergeConfig.quickItemField]:id}]
+            skuKey:[]
           };
           let checked=this.modelItemNum>1?true:false;
           let group=_get(item,this.mergeConfig.groupField);
+          //sku map
           skuMap[id]={
             id:id,
             name:label,
             value:value,
-            checked:checked
+            checked:checked,
+            expandItem:true,
           };
-          let groupId=group.id;
-          if(groupMap[groupId]){
-            groupMap[groupId].name=group.name;
-            groupMap[groupId].skuIds.push(id);
+          //groupMap
+          let groupKey=chinese2pinyin(group);
+          if(groupMap[groupKey]){
+            groupMap[groupKey].name=group;
+            groupMap[groupKey].skuIds.push(id);
           }else{
-            groupMap[groupId]={id:groupId,name:group.name,skuIds:[id]};
+            groupMap[groupKey]={key:groupKey,name:group,skuIds:[id]};
           }
         });
-        skuMap.forEach(e=>{
-          this.skus.push(e);
-        });
-        groupMap.forEach(e=>{
-          this.groups.push(e);
-        })
+        for(let o in skuMap){
+          let v=skuMap[o];
+          this.skus.push(v);
+        }
+        for(let o in groupMap){
+          let v=groupMap[o];
+          this.groups.push(v);
+        }
       },
       //点击tabs
       clickTab(index,title){
         if(index>1){
           this.groupSkus=[];
           let oTab=this.$refs[`tab${index}`];
-          let groupId=oTab[0].$attrs.groupId;
-          let skus=groupMap[groupId].skuIds;
+          let groupKey=oTab[0].$attrs.groupKey;
+          let skus=groupMap[groupKey].skuIds;
           skus.forEach(id=>{
             this.groupSkus.push(skuMap[id]);
           });
         }  
       },
       //模态框里面 label上的增加
-      createSchema(label){
-        let template=label.value.skuKey;
+      createSchema(item){
+        let v={[this.mergeConfig.quickItemField]:item.id};
         let arr=[];
+        arr.push(v);
+        let template=item.value.skuKey;
+        
         for(let i=0;i<template.length;i++){
           arr.push(template[i]);
-        }
-        arr.push({id:1});
-        label.value={
+        };
+        //设置value
+        item.value={
           skuKey:arr
         }
       },
       //模态框里面 label上的删除
-      deleteAllSchema(label){
-        console.log(1);
-        let arr=[];
-        label.value={
-          skuKey:arr
-        }
+      deleteAllSchema(item){
+        item.value.skuKey = [];
       },
       //模态框确定
       onModelSure(){
