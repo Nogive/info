@@ -68,13 +68,13 @@
               <div class="content-label">
                 <label class="title">{{item.name}}</label>
                 <div class="icons">
-                  <van-icon v-if="!test" name="add-o" @click="createSchema(item)"></van-icon>
-                  <van-icon v-else name="passed" :class="{checked:item.checked}" @click="item.checked=!item.checked"></van-icon>
-                  <van-icon v-show="item.value.skuKey.length>0" name="delete" @click="deleteAllSchema(item)"></van-icon>
-                  <i class="arrow" :class="{'pull-up': !item.expandItem, 'pull-down': item.expandItem}" @click="item.expandItem=!item.expandItem"></i>
+                  <van-icon v-show="item.value.skuKey.length>0&&getAttrCount(item.value.skuKey[0])>1" name="delete" @click="deleteAllSchema(item)"></van-icon>
+                  <van-icon v-if="item.showChecked" name="passed" :class="{checked:item.checked}" @click="checkedItem(item)"></van-icon>
+                  <van-icon v-else name="add-o" @click="createSchema(item)"></van-icon>
+                  <i class="arrow" v-if="!item.showChecked" :class="{'pull-up': !item.expandItem, 'pull-down': item.expandItem}" @click="item.expandItem=!item.expandItem"></i>
                 </div>
               </div>
-              <div class="content-form" v-if="item.value.skuKey.length>0" v-show="item.expandItem">
+              <div class="content-form" v-if="item.value.skuKey.length>0&&getAttrCount(item.value.skuKey[0])>1" v-show="item.expandItem">
                 <ncform
                   :ref="`schema${item.id}`"
                   :form-schema="simpleSchema" 
@@ -91,13 +91,13 @@
               <div class="content-label">
                 <label class="title">{{item.name}}</label>
                 <div class="icons">
-                  <van-icon v-if="!test" name="add-o" @click="createSchema(item)"></van-icon>
-                  <van-icon v-else name="passed" :class="{checked:item.checked}" @click="item.checked=!item.checked"></van-icon>
-                  <van-icon v-show="item.value.skuKey.length>0" name="delete" @click="deleteAllSchema(item)"></van-icon>
-                  <i class="arrow" :class="{'pull-up': !item.expandItem, 'pull-down': item.expandItem}" @click="item.expandItem=!item.expandItem"></i>
+                  <van-icon v-show="item.value.skuKey.length>0&&getAttrCount(item.value.skuKey[0])>1" name="delete" @click="deleteAllSchema(item)"></van-icon>
+                  <van-icon v-if="item.showChecked" name="passed" :class="{checked:item.checked}" @click="checkedItem(item)"></van-icon>
+                  <van-icon v-else name="add-o" @click="createSchema(item)"></van-icon>
+                  <i class="arrow" v-if="!item.showChecked" :class="{'pull-up': !item.expandItem, 'pull-down': item.expandItem}" @click="item.expandItem=!item.expandItem"></i>
                 </div>
               </div>
-              <div class="content-form" v-if="item.value.skuKey.length>0" v-show="item.expandItem">
+              <div class="content-form" v-if="item.value.skuKey.length>0&&getAttrCount(item.value.skuKey[0])>1" v-show="item.expandItem">
                 <ncform
                   :ref="`simpleSchema${item.id}`"
                   :form-schema="simpleSchema" 
@@ -317,14 +317,15 @@
           let id=_get(item,this.mergeConfig.idField);
           let label=_get(item,this.mergeConfig.labelField);
           let value=this.initMapData(id);
-          let checked=this.modelItemNum>1?true:false;
+          let showChecked=this.modelItemNum==1;
           let group=_get(item,this.mergeConfig.groupField);
           //sku map
           skuMap[id]={
             id:id,
             name:label,
             value:value,
-            checked:checked,
+            showChecked:showChecked,
+            checked:false,
             expandItem:true,
           };
           //groupMap
@@ -412,6 +413,16 @@
           skuKey:arr
         }
       },
+      checkedItem(item){
+        item.checked=!item.checked;
+        let v={[this.mergeConfig.quickItemField]:item.id};
+        let arr=[];
+        arr.push(v);
+        //设置value
+        item.value={
+          skuKey:arr
+        }
+      },
       //模态框里面 label上的删除
       deleteAllSchema(item){
         item.value.skuKey = [];
@@ -426,6 +437,15 @@
             this.setValue(s);
           });
         });
+      },
+      getAttrCount(obj){
+        var count = 0;
+        for (var i in obj) {
+          if (obj.hasOwnProperty(i)) {
+            count++;
+          }
+        }
+        return count;
       },
       //将模态框的数据塞到外层里面
       sendData(){
