@@ -107,8 +107,9 @@
       }
     },
     created(){
+      let key=this.schema.ui.widgetConfig.quickItemField;
       var values = ncformCommon.ncformUtils.getModelFromSchema(this.schema);
-      if(values[0].id == -1){
+      if(values[0][key] == -1){
           this.schema.value=[];
         }
     }

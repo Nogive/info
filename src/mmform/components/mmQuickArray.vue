@@ -101,7 +101,7 @@
                 <ncform
                   :ref="`simpleSchema${item.id}`"
                   :form-schema="simpleSchema" 
-                  :form-name="`groupSchema_${item.id}_${tab.id}`" 
+                  :form-name="`groupSchema_${item.id}_${tab.key}`" 
                   v-model="item.value">
                 </ncform>
               </div>
@@ -214,7 +214,6 @@
 <script>
   import {data} from "./data/mock"
   import {getAttrCount} from "./utils"
-  import {chinese2pinyin} from "./utils/toChinese"
 
   var superagent = require('superagent');
   import _get from "lodash-es/get";
@@ -243,6 +242,7 @@
       }
     },
     created(){
+      this.initSimpleGroupMap();
       this.initMap();
       this.modelItemNum=getAttrCount(this.schema.items.properties);
       this.setModelSchema(this.schema.items);
@@ -278,7 +278,8 @@
                 readonly:'dx: {{$const.mode}}=="view"',
                 widget:'mm-simple-array',
                 widgetConfig:{
-                  collapsed:false
+                  collapsed:false,
+                  quickItemField:this.mergeConfig.quickItemField
                 }
               }
             }
@@ -312,14 +313,10 @@
       },
       //初始化map
       initMap(){
-        let groups=[];
         data.forEach(item=>{
           let id=_get(item,this.mergeConfig.idField);
           let label=_get(item,this.mergeConfig.labelField);
-          //TODO:  读dataform的值
-          let value={
-            skuKey:[]
-          };
+          let value=this.initMapData(id);
           let checked=this.modelItemNum>1?true:false;
           let group=_get(item,this.mergeConfig.groupField);
           //sku map
@@ -331,12 +328,11 @@
             expandItem:true,
           };
           //groupMap
-          let groupKey=chinese2pinyin(group);
-          if(groupMap[groupKey]){
-            groupMap[groupKey].name=group;
+          let groupKey=this.getCurrentGroupMapKey(group);
+          if(groupMap[groupKey].skuIds&&groupMap[groupKey].skuIds.length>0){
             groupMap[groupKey].skuIds.push(id);
           }else{
-            groupMap[groupKey]={key:groupKey,name:group,skuIds:[id]};
+            groupMap[groupKey].skuIds=[id];
           }
         });
         for(let o in skuMap){
@@ -347,6 +343,47 @@
           let v=groupMap[o];
           this.groups.push(v);
         }
+      },
+      //根据数据初始简单的groupMap  内含自定义id  和groupName 以id为key
+      initSimpleGroupMap(){
+        let tempGroups=[];
+        data.forEach(item=>{
+          let group=_get(item,this.mergeConfig.groupField);
+          if(!tempGroups.includes(group)){
+            tempGroups.push(group);
+          }
+        });
+        tempGroups.forEach((g,i)=>{
+          groupMap[i]={
+            key:i,
+            name:g
+          }
+        });
+      },
+      //根据group的name  获取当前的groupMap的key 
+      getCurrentGroupMapKey(name){
+        for(let g in groupMap){
+          let v=groupMap[g];
+          if(v.name==name){
+            return g;
+          }
+        }
+      },
+      //初始化map里面的数据  若有初始值则设置相应的值  否则设置为空
+      initMapData(id){
+        let key=this.mergeConfig.quickItemField;
+        let data=this.getFormDataFromSchema();
+        let result=[];
+        if(data.length>0){
+          data.forEach(e=>{
+            if(e[key]==id){
+              result.push(e)
+            }
+          })
+        }
+        return {
+          skuKey:result
+        };
       },
       //点击tabs
       clickTab(index,title){

@@ -109,7 +109,7 @@ export default {
     }
   },
   created(){
-    this.formSchema.value=data;
+    //this.formSchema.value=data;
   },
   methods: {
     submit () {
