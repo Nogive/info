@@ -18,38 +18,37 @@ const items={
       widget:'mm-input',
     }
   },
-  // shuliang:{
-  //   type:'number',
-  //   ui:{
-  //     label:'数量',
-  //     readonly:'dx:{{$const.mode}}=="view"',
-  //     widget:'mm-number',
-  //     widgetConfig:{
-  //       step:1,
-  //       min:Number.NEGATIVE_INFINITY
-  //     }
-  //   },
-  //   rules: {
-  //     required:true,
-  //   }
-  // },
-  // jiage:{
-  //   type:'number',
-  //   ui:{
-  //     label:'价格',
-  //     readonly:'dx:{{$const.mode}}=="view"',
-  //     widget:'mm-number',
-  //     widgetConfig:{
-  //       step:1,
-  //       min:Number.NEGATIVE_INFINITY
-  //     }
-  //   },
-  //   rules: {
-  //     required:true,
-  //   }
-  // },
+  shuliang:{
+    type:'number',
+    ui:{
+      label:'数量',
+      readonly:'dx:{{$const.mode}}=="view"',
+      widget:'mm-number',
+      widgetConfig:{
+        step:1,
+        min:Number.NEGATIVE_INFINITY
+      }
+    },
+    rules: {
+      required:true,
+    }
+  },
+  jiage:{
+    type:'number',
+    ui:{
+      label:'价格',
+      readonly:'dx:{{$const.mode}}=="view"',
+      widget:'mm-number',
+      widgetConfig:{
+        step:1,
+        min:Number.NEGATIVE_INFINITY
+      }
+    },
+    rules: {
+      required:true,
+    }
+  },
 };
-const ceshi={};
 const schema={
   type:'object',
   properties:{
@@ -109,7 +108,7 @@ export default {
     }
   },
   created(){
-    //this.formSchema.value=data;
+    this.formSchema.value=data;
   },
   methods: {
     submit () {
