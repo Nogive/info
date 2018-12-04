@@ -367,6 +367,8 @@
       initMap(){
         this.skus=[];
         this.groups=[];
+        this.searchSkus=[];
+        this.groupSkus=[];
         skuMap=[];
         data.forEach(item=>{
           let id=_get(item,this.mergeConfig.idField);
