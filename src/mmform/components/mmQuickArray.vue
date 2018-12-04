@@ -62,8 +62,31 @@
               </van-field>
             </van-cell-group>
           </div>
-          <div class="content-form" ref="searchBox" id="searchBox">
-            1111
+          <div class="content-form content-wrapper">
+            <div class="content" v-for="(item,index) in searchSkus" :key="index">
+              <div class="content-label">
+                <label class="title">{{item.name}}</label>
+                <div class="icons">
+                  <van-icon v-if="isShowCheckedBtn" name="passed" :class="{checked:item.checked}" @click="checkedItem(item)"></van-icon>
+                  <span v-else class="add-btns">
+                    <span class="total" v-show="isShowDeleteBtn(item)">{{item.value.skuKey.length}}</span>
+                    <van-icon v-show="isShowDeleteBtn(item)" name="delete" @click="deleteAllSchema(item)"></van-icon>
+                    <van-icon name="add-o" @click="createSchema(item)"></van-icon>
+                    <i class="arrow" v-if="!item.showChecked" :class="{'pull-up': !item.expandItem, 'pull-down': item.expandItem}" @click="item.expandItem=!item.expandItem"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="content-form" v-if="isShowDeleteBtn(item)" v-show="item.expandItem">
+                <ncform
+                  :form-schema="simpleSchema" 
+                  :form-name="`searchSchema_${item.id}`" 
+                  v-model="item.value">
+                </ncform>
+              </div>
+            </div>
+            <div v-show="noSearchResult" class="no-search-content">
+              暂无搜索结果 ~
+            </div>
           </div>
         </van-tab>
         <van-tab title="所有">
@@ -142,6 +165,8 @@
         .total
           font-weight bold
           margin-right 8px
+          vertical-align top
+          color #38f
         .van-icon
           font-size 20px
           margin-right 8px
@@ -189,6 +214,12 @@
         padding 0.5rem 0
         .van-field
           padding 5px 0
+          .van-button
+            &:first-child
+              margin-right 8px
+        .no-search-content
+          text-align center
+          color #ccc
         .content
           border 1px solid rgba(0,0,0,.1)
           margin-bottom 10px
@@ -201,6 +232,8 @@
               .total
                 margin-right 8px
                 font-weight bold
+                vertical-align top
+                color #38f
               .van-icon
                 font-size 20px
                 margin-right 8px
@@ -227,13 +260,11 @@
 
 <script>
   import {data} from "./data/mock"
-
   var superagent = require('superagent');
   import _get from "lodash-es/get";
   import _cloneDeep from "lodash-es/cloneDeep";
   import ncformCommon from '@ncform/ncform-common';
   const layoutArrayMixin = ncformCommon.mixins.vue.layoutArrayMixin;
-
   var skuMap=[];
   var groupMap=[];
   export default {
@@ -241,15 +272,15 @@
     data(){
       return {
         deleteAll:false,//删除全部按钮
-
         modelItemNum:1,//model里面的schema properties的个数
         groups:[],//选项卡
         skus:[],//sku,
         groupSkus:[],//每个目录对应的skus
+        searchSkus:[],//搜索结果
         active:1,//tab显示第几项
         openPopup:false,//模态框是否显示
         searchText:'',//搜索关键字
-        temp:[],
+        noSearchResult:false,//没有搜索结果
       }
     },
     created(){
@@ -489,6 +520,7 @@
           }
         }
       },
+      //点击搜索
       onSearch(){
         console.log(this.searchText);
         var html='';
@@ -500,17 +532,14 @@
               searchResult.push(e);
             }
           });
-          if(searchResult.length>0){
-            searchResult.forEach(sku=>{
-              html+=`<ncform :form-schema="simpleSchema" :form-name="searchSchema_${sku.id}" v-model="${sku.value}"></ncform>`;
-            })
-          }else{
-            html="<p>暂无数据</p>";
-          }
+          this.noSearchResult=searchResult.length==0;
+          this.searchSkus=searchResult;
         }
-        console.log('html:',html);
-        document.getElementById('searchBox').innerHtml=html;
-        //this.$refs['searchBox'].appendChild(oDiv);
+      },
+      //取消搜索
+      onCancle(){
+        this.noSearchResult=false;
+        this.searchSkus=[];
       },
       //获取某个对象中属性的个数
       getAttrCount(obj){
@@ -531,7 +560,6 @@
       setValue(obj){
         this.schema.value.push(obj);
         let idx = this.schema.value.length - 1;
-
         if (!this.schema.value[idx].__dataSchema) {
           const __dataSchema = _cloneDeep(this.schema.items);
           ncformCommon.ncformUtils.setValueToSchema(
@@ -541,7 +569,6 @@
           );
           this.$set(this.schema.value, idx, { __dataSchema });
         }
-
         if (!this.schema.value[idx].__dataSchema.__id) {
           this.schema.value[idx].__dataSchema.__id = Math.random();
         }
