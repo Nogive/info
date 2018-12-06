@@ -17,14 +17,14 @@ export default new Router({
       }
     },
     {
-      path: "/test",
-      name: "test",
-      component: () => import("@/components/test")
-    },
-    {
       path: "/custom",
       name: "custom",
       component: () => import("@/pages/sell_point/custom")
+    },
+    {
+      path: "/detail",
+      name: "detail",
+      component: () => import("@/pages/sell_point/detail")
     },
     {
       path: "/jinhuo",
@@ -47,14 +47,14 @@ export default new Router({
       component: () => import("@/pages/visitation/visitation")
     },
     {
-      path: "/form",
-      name: "form",
-      component: () => import("@/components/form")
-    },
-    {
       path: "/other",
       name: "other",
       component: () => import("@/components/other")
+    },
+    {
+      path: "/test",
+      name: "test",
+      component: () => import("@/components/test")
     }
   ]
 });

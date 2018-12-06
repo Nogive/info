@@ -14,7 +14,7 @@ export var ddApi = new XFieldApi.DingApi();
 export var dformApi = new XFieldApi.DformApi();
 
 //custom visitation
-export var customApi = new XFieldApi.CustomApi();
+export var customApi = new XFieldApi.CustomerApi();
 
 //dingApi里面的参数
 const apiParams = {
@@ -34,7 +34,7 @@ const apiParams = {
     return opts;
   },
   //custom formdata
-  createCustomData: function(body) {
+  createCustomerData: function(body) {
     return new XFieldApi.Formdata.constructFromObject(body);
   },
   //visitation schema
@@ -65,7 +65,9 @@ export var custom = {
     var auth = defaultClient.authentications["ApiKeyAuth"];
     auth.apiKey = key;
   },
-  errorCode: XFieldApi.Error.CodeEnum
+  errorCode: XFieldApi.Error.CodeEnum,
+  validParams: (validObj, body) =>
+    new XFieldApi[validObj].constructFromObject(body)
 };
 /**
  * 调用API

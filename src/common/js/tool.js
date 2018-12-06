@@ -7,6 +7,15 @@ const tools = {
   reducedDistanceUnit: val => {
     return val;
   },
+  apiCode: {
+    ok: 200,
+    noAuth: 401,
+    noPermission: 403,
+    error: 400,
+    notFound: 404,
+    internalError: 500,
+    serverError: 502
+  },
   /**
    * 接口错误弹窗  仅针对vant
    * @param  that 调用方的this对象 必填
@@ -14,8 +23,18 @@ const tools = {
    */
   dealError: function(that, error) {
     if (that) {
-      var code = error.code ? " 错误码:" + error.code : "";
-      that.$toast(error.message + code);
+      if (error.status == tools.apiCode.noAuth) {
+        that.$toast("身份验证已经失效，请重新登录！错误码:" + error.status);
+      } else if (error.status == tools.apiCode.noPermission) {
+        that.$toast(
+          "抱歉！您没有权限访问，请联系管理员。错误码:" + error.status
+        );
+      } else if (error.status == tools.apiCode.internalError) {
+        that.$toast("服务器发生错误，请联系管理员。错误码:" + error.status);
+      } else {
+        console.log("errorBody:", error.response.body);
+        that.$toast("请求发生错误.错误码:" + error.status);
+      }
     } else {
       throw new Error("that 为必填参数");
     }

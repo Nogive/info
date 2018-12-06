@@ -279,6 +279,7 @@ export default {
     }
   },
   created(){
+    //供本地测试用
     this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
     custom.setAuth(this.Utils.Local.get('token'));
   },

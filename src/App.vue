@@ -11,6 +11,9 @@ import {ddApi,callApi,custom} from "@/server/swagger";
 export default {
   name: 'App',
   created(){
+    //供测试使用
+    this.Utils.Local.set('token','a3ULGGVU05pQ4Rnj');
+    
     //this.Utils.openVconsole();
     this._initEnvironment();
   },

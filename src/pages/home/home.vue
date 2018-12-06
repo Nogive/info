@@ -51,15 +51,15 @@
           </router-link>
         </van-col>
         <van-col span="6">
-          <router-link to="/form">
+          <router-link to="/custom">
             <i class="iconfont">&#xe68c;</i>
-            <h5 class="title">ncform</h5>
+            <h5 class="title">custom</h5>
           </router-link>
         </van-col>
         <van-col span="6">
           <router-link to="/other">
             <i class="iconfont">&#xe68c;</i>
-            <h5 class="title">other</h5>
+            <h5 class="title">quickarray</h5>
           </router-link>
         </van-col>
       </van-row>
