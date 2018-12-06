@@ -8,9 +8,9 @@
   </div>
 </template>
 <script>
-import { dformApi,custom,callApi } from "@/server/swagger";
 import "@/mmform/index";
-import tools from "@/common/js/tool"
+import {dformApi,custom}from "@/server";
+import tool from "@/common/js/tool";
 import baseSchemaEditPage from "@/components/base/baseSchemaEditPage";
 
 const formSchema={
@@ -211,19 +211,18 @@ export default {
   methods: {
     init(){
       let _this=this;
-      callApi(dformApi,'getSchema',{id:101,mode:'edit'}).then(res=>{
-        _this.systemSchemaId=res.systemSchemaId;
-        _this.systemSchemaVersion=res.systemSchemaVersion;
-        _this.jinhuoSchema=res.schema;
+      this.Utils.loading(_this,true);
+      dformApi.getSchema('101').then(data=>{
+        _this.systemSchemaId=data.systemSchemaId;
+        _this.systemSchemaVersion=data.systemSchemaVersion;
+        _this.jinhuoSchema=data.editSchema;
         //for dongke
         this.setValue();
         _this.isSchemaChanging=true;
-      },err=>{
-        if(err.body){
-          console.log("errorBody:",err.body);
-        }else{
-          tools.dealError(_this,err);
-        }
+        this.Utils.loading(_this,false);
+      },error=>{
+        this.Utils.loading(_this,false);
+        tool.dealError(_this,error);
       })
     },
     submit () {
@@ -237,16 +236,15 @@ export default {
             systemCreatorUserId:"210000",
             formData:formdata
           };
-          callApi(dformApi,'createFormdata',params).then(res=>{
-            _this.$toast('提交成功！');
+          this.Utils.loading(_this,true);
+          dformApi.createFormdata(params).then(data=>{
+            this.Utils.loading(_this,false);
+            _this.$toast("提交成功");
             _this.$router.back();
-          },err=>{
-            if(err.body){
-              console.log("errorBody:",err.body);
-            }else{
-              tools.dealError(_this,err);
-            }
-          })
+          },error=>{
+            this.Utils.loading(_this,false);
+            tool.dealError(_this,error);
+          });
         }
       })
     },

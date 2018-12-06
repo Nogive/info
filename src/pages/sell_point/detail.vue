@@ -91,7 +91,7 @@ export default {
         console.log('schema:',data);
         _this.customSchema=data.viewSchema;
         _this.isSchemaChanging=true;
-      },err=>{
+      },error=>{
         tool.dealError(_this,error);
       })
     },
@@ -100,7 +100,7 @@ export default {
       customerApi.getCustomer(1).then(data=>{
         console.log('data:',data);
         _this.customSchema.value=data.formData;
-      },err=>{
+      },error=>{
         tool.dealError(_this,error);
       })
     }

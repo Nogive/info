@@ -8,9 +8,9 @@
   </div>
 </template>
 <script>
-import { customApi,custom,callApi } from "@/server/swagger";
 import "@/mmform/index";
-
+import {customerApi,custom}from "@/server";
+import tool from "@/common/js/tool";
 import baseSchemaEditPage from "@/components/base/baseSchemaEditPage";
 
 const formSchema={
@@ -286,26 +286,23 @@ export default {
   methods: {
     init(){
       let _this=this;
-      callApi(customApi,'getCustomSchema',{mode:'edit'}).then(res=>{
-        _this.systemSchemaId=res.systemSchemaId;
-        _this.systemSchemaVersion=res.systemSchemaVersion;
-        _this.customSchema=res.schema;
+      this.Utils.loading(_this,true);
+      customerApi.getCustomerSchema().then(data=>{
+        _this.systemSchemaId=data.systemSchemaId;
+        _this.systemSchemaVersion=data.systemSchemaVersion;
+        _this.customSchema=data.editSchema;
         _this.isSchemaChanging=true;
         this.Utils.loading(_this,false);
-      },err=>{
-        if(err.body){
-          console.log("errorBody:",err.body);
-        }else{
-          tools.dealError(_this,err);
-        }
-      })
+      },error=>{
+        this.Utils.loading(_this,false);
+        tool.dealError(_this,error);
+      });
     },
     submit () {
       let _this=this;
       this.$ncformValidate('customSchema').then(data => {
         if (data.result) {
           let formdata=this.$data.customSchema.value;
-          console.log(formdata);
           let params={
             systemSchemaId:_this.systemSchemaId,
             systemSchemaVersion:_this.systemSchemaVersion,
@@ -313,16 +310,15 @@ export default {
             formData:formdata
           };
           console.log(params);
-          callApi(customApi,'createCustomData',params).then(res=>{
+          this.Utils.loading(_this,true);
+          customerApi.createCustomerData(params).then(data=>{
+            this.Utils.loading(_this,false);
             _this.$toast("提交成功");
             _this.$router.back();
-          },err=>{
-            if(err.body){
-              console.log("errorBody:",err.body);
-            }else{
-              tools.dealError(_this,err);
-            }
-          })
+          },error=>{
+            this.Utils.loading(_this,false);
+            tool.dealError(_this,error);
+          });
         }
       })
     },

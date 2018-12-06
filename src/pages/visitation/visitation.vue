@@ -8,8 +8,9 @@
   </div>
 </template>
 <script>
-import { customApi,custom,callApi } from "@/server/swagger";
 import "@/mmform/index";
+import {customerApi,custom}from "@/server";
+import tool from "@/common/js/tool";
 import baseSchemaEditPage from "@/components/base/baseSchemaEditPage";
 
 const formSchema={
@@ -154,21 +155,8 @@ export default {
   },
   methods: {
     init(){
-      let _this=this;
-      callApi(customApi,'getVisitationSchema',{mode:'edit'}).then(res=>{
-        console.log(res.schema);
-        _this.systemSchemaId=res.systemSchemaId;
-        _this.systemSchemaVersion=res.systemSchemaVersion;
-        _this.visitationSchema=res.schema;
-        _this.visitationSchema=data;
-        _this.isSchemaChanging=true;
-      },err=>{
-        if(err.body){
-          console.log("errorBody:",err.body);
-        }else{
-          tools.dealError(_this,err);
-        }
-      })
+      this.visitationSchema=formSchema;
+      this.isSchemaChanging=true;
     },
     submit () {
       let _this=this;

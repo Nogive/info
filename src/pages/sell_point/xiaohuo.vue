@@ -9,7 +9,10 @@
 </template>
 <script>
 import "@/mmform/index";
-import { custom,callApi } from "@/server/swagger";
+import {dformApi,custom}from "@/server";
+import tool from "@/common/js/tool";
+import baseSchemaEditPage from "@/components/base/baseSchemaEditPage";
+
 const formSchema={
   type: 'object',
   properties: {
@@ -223,25 +226,20 @@ export default {
     //this.getSchema();
   },
   methods: {
-    getSchema(){
+    init(){
       let _this=this;
-      var opts={
-        id:1,
-        mode:'edit'
-      }
-      callApi(dformApi,'getSchema',opts).then(res=>{
-        console.log(res.schema);
-        _this.systemSchemaId=res.systemSchemaId;
-        _this.systemSchemaVersion=res.systemSchemaVersion;
-        _this.xiaohuoSchema=res.schema;
-        _this.xiaohuoSchema.value=data;
+      this.Utils.loading(_this,true);
+      dformApi.getSchema(102).then(data=>{
+        _this.systemSchemaId=data.systemSchemaId;
+        _this.systemSchemaVersion=data.systemSchemaVersion;
+        _this.xiaohuoSchema=data.editSchema;
+        //for dongke
+        this.setValue();
         _this.isSchemaChanging=true;
-      },err=>{
-        if(err.body){
-          console.log("errorBody:",err.body);
-        }else{
-          tools.dealError(_this,err);
-        }
+        this.Utils.loading(_this,false);
+      },error=>{
+        this.Utils.loading(_this,false);
+        tool.dealError(_this,error);
       })
     },
     submit () {
@@ -249,7 +247,21 @@ export default {
       this.$ncformValidate('xiaohuoSchema').then(data => {
         if (data.result) {
           let formdata=this.$data.xiaohuoSchema.value;
-          console.log(formdata);
+          let params={
+            systemSchemaId:_this.systemSchemaId,
+            systemSchemaVersion:_this.systemSchemaVersion,
+            systemCreatorUserId:"210000",
+            formData:formdata
+          };
+          this.Utils.loading(_this,true);
+          dformApi.createFormdata(params).then(data=>{
+            this.Utils.loading(_this,false);
+            _this.$toast("提交成功");
+            _this.$router.back();
+          },error=>{
+            this.Utils.loading(_this,false);
+            tool.dealError(_this,error);
+          });
         }
       })
     },

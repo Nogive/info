@@ -7,7 +7,7 @@
 <script>
 import tools from "@/common/js/tool"
 import { requestAuthCode } from "@/common/js/ding";
-import {ddApi,callApi,custom} from "@/server/swagger";
+import {ddApi,custom} from "@/server/swagger";
 export default {
   name: 'App',
   created(){
@@ -41,35 +41,33 @@ export default {
     login(code){
       let _this=this;
       let params={corpId: _this.Utils.getParameterByName("corpId"),code:code};
-      callApi(ddApi,"dingGetuserinfo",params).then(res=>{
-        console.log("dingGetuserinfo:",res);
-        custom.setAuth(res.token);
-        _this.Utils.Local.set('user',res.user);
-        _this.Utils.Local.set('token',res.token);
+      this.Utils.loading(_this,true);
+      ddApi.dingGetuserinfo(params).then(data=>{
+        console.log("dingGetuserinfo:",data);
+        custom.setAuth(data.token);
+        _this.Utils.Local.set('user',data.user);
+        _this.Utils.Local.set('token',data.token);
         _this.questJsApiConfigAndSet();
-      },err=>{
-        if(err.body){
-          console.log("errorBody:",err.body);
-        }else{
-          tools.dealError(_this,err);
-        }
-      })
+        this.Utils.loading(_this,false);
+      },error=>{
+        this.Utils.loading(_this,false);
+        tool.dealError(_this,error);
+      });
     },
     questJsApiConfigAndSet(){
       let _this=this;
       let url=this.Utils.getFullUrl();
-      callApi(ddApi,'dingConfig',url).then(res=>{
-        console.log("dingConfig_res",res);
-        let config = res;
+      _this.Utils.loading(_this,true);
+      ddApi.dingConfig(url).then(data=>{
+        console.log("dingConfig_res",data);
+        let config = data;
         config.jsApiList = ["biz.util.uploadImageFromCamera","device.geolocation.start","device.geolocation.stop"];
         dd.config(config);
-      },err=>{
-        if(err.body){
-          console.log("errorBody:",err.body);
-        }else{
-          tools.dealError(_this,err);
-        }
-      })
+        _this.Utils.loading(_this,false);
+      },error=>{
+        _this.Utils.loading(_this,false);
+        tool.dealError(_this,error);
+      });
     }
   }
 }

@@ -9,7 +9,9 @@
 </template>
 <script>
 import "@/mmform/index";
-import { custom,callApi } from "@/server/swagger";
+import {dformApi,custom}from "@/server";
+import tool from "@/common/js/tool";
+import baseSchemaEditPage from "@/components/base/baseSchemaEditPage";
 const formSchema={
   type: 'object',
   properties: {
@@ -202,27 +204,7 @@ export default {
     //this.getSchema();
   },
   methods: {
-    getSchema(){
-      let _this=this;
-      var opts={
-        id:103,
-        mode:'edit'
-      }
-      callApi(dformApi,'getSchema',opts).then(res=>{
-        console.log(res.schema);
-        _this.systemSchemaId=res.systemSchemaId;
-        _this.systemSchemaVersion=res.systemSchemaVersion;
-        _this.kucunSchema=res.schema;
-        _this.kucunSchema.value=data;
-        _this.isSchemaChanging=true;
-      },err=>{
-        if(err.body){
-          console.log("errorBody:",err.body);
-        }else{
-          tools.dealError(_this,err);
-        }
-      })
-    },
+    init(){},
     submit () {
       let _this=this;
       this.$ncformValidate('kucunSchema').then(data => {
