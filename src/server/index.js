@@ -41,24 +41,22 @@ export const customerApi = {
     });
   },
 
-  delFollower: (customerId, userId) => {
+  //删除跟进信息
+  /**
+   *var opts = {
+      'userId': 789 // Number | 没有默认删除主跟进信息
+    };
+   */
+  delFollower: (customerId, opts) => {
     return new Promise((resolve, reject) => {
       customerApiInstance.delFollower(
         customerId,
-        userId,
+        opts,
         callback(resolve, reject)
       );
     });
   },
 
-  delMajorFollower: customerId => {
-    return new Promise((resolve, reject) => {
-      customerApiInstance.delMajorFollower(
-        customerId,
-        callback(resolve, reject)
-      );
-    });
-  },
   //编辑formdata后提交
   editCustomerData: (id, params) => {
     let body = new XFieldApi.Formdata.constructFromObject(params);
@@ -66,10 +64,21 @@ export const customerApi = {
       customerApiInstance.editCustomerData(id, body, callback(resolve, reject));
     });
   },
-  //通过id获取formdata
-  getCustomer: id => {
+  editVisitation: (id, params) => {
+    let body = new XFieldApi.Formdata.constructFromObject(params);
     return new Promise((resolve, reject) => {
-      customerApiInstance.getCustomer(id, callback(resolve, reject));
+      customerApiInstance.editCustomerData(id, body, callback(resolve, reject));
+    });
+  },
+  //通过id获取formdata
+  /**
+  var opts = {
+    'id': 789 // Number | id
+  };
+   */
+  getCustomer: opts => {
+    return new Promise((resolve, reject) => {
+      customerApiInstance.getCustomer(opts, callback(resolve, reject));
     });
   },
 
@@ -138,6 +147,16 @@ export const dformApi = {
     let body = new XFieldApi.Formdata.constructFromObject(params);
     return new Promise((resolve, reject) => {
       dformApiInstance.editFormdata(id, body, callback(resolve, reject));
+    });
+  },
+  /**
+  var opts = {
+    'id': 789 // Number | 根据id获取formdata
+  };
+   */
+  getFormdata: opts => {
+    return new Promise((resolve, reject) => {
+      dformApiInstance.getSchema(opts, callback(resolve, reject));
     });
   },
   //根据id获取schema

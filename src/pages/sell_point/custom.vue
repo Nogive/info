@@ -11,6 +11,7 @@
 import "@/mmform/index";
 import {customerApi,custom}from "@/server";
 import tool from "@/common/js/tool";
+
 import baseSchemaEditPage from "@/components/base/baseSchemaEditPage";
 
 const formSchema={
@@ -177,7 +178,7 @@ const formSchema={
                 filterable:true,
                 filterLocal:true,
                 itemValueField: 'id',
-                itemLabelField: 'formdata.name',
+                itemLabelField: 'formdata.SystemName',
                 enumSourceRemote: {
                   remoteUrl: 'http://x.waiqin.co/api/sku/list',
                   paramName: 'keyword',

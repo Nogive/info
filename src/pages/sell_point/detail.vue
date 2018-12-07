@@ -98,7 +98,7 @@ export default {
     },
     getCustomerData(){
       let _this=this;
-      customerApi.getCustomer(1).then(data=>{
+      customerApi.getCustomer({id:1}).then(data=>{
         console.log('data:',data);
         _this.customSchema.value=data.formData;
       },error=>{

@@ -23,8 +23,8 @@ const formSchema={
         readonly:true,
         widget:'mm-foreign-object',
         widgetConfig:{
-          itemLabelField:'name',
-          remoteUrl: 'http://x.waiqin.co/api/custom/search',//远程请求的地址
+          itemLabelField:'formdata.shoudianmingchen',
+          remoteUrl: 'http://x.waiqin.co/api/customer',//远程请求的地址
           paramName: 'keyword',
           resField: '',
           otherParams:{id:'dx:{{$root.shoudianmingchen.id}}'},
@@ -67,7 +67,7 @@ const formSchema={
           filterable:true,
           filterLocal:true,
           itemValueField: 'id',
-          itemLabelField: 'formdata.name',
+          itemLabelField: 'formdata.SystemName',
           enumSourceRemote: {
             remoteUrl: 'http://x.waiqin.co/api/sku/list',
             paramName: 'keyword',

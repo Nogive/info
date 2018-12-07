@@ -23,8 +23,8 @@ const formSchema={
         readonly:true,
         widget:'mm-foreign-object',
         widgetConfig:{
-          itemLabelField:'name',
-          remoteUrl: 'http://x.waiqin.co/api/custom/search',
+          itemLabelField:'formdata.shoudianmingchen',
+          remoteUrl: 'http://x.waiqin.co/api/customer',
           paramName: 'keyword',
           resField: '',
           otherParams:{id:'dx:{{$root.shoudianmingchen.id}}'},
@@ -105,7 +105,7 @@ const formSchema={
                 filterable:true,
                 filterLocal:true,
                 itemValueField: 'id',
-                itemLabelField: 'formdata.name',
+                itemLabelField: 'formdata.SystemName',
                 enumSourceRemote: {
                   remoteUrl: 'http://x.waiqin.co/api/sku/list',
                   paramName: 'keyword',
@@ -156,7 +156,7 @@ const formSchema={
                 enumSourceRemote: {
                   remoteUrl: 'http://x.waiqin.co/api/sku',
                   paramName: 'keyword',
-                  resField: 'formdata.units',
+                  resField: 'formdata.SystemSpecification',
                   otherParams:{id:'dx:{{$root.chanpins[i].chanpingming}}'},
                   selectFirstitem: true,
                   withAuthorization:true,
@@ -197,16 +197,7 @@ var data={
   shoudianmingchen:{
     id:1,
     name:'ceshi'
-  },
-  kaishiriqi:1542607907000,
-  jieshuriqi:1542607907000,
-  chanpins:[
-    {
-      chanpingming:'1',
-      shuliang:2,
-      danwei:'1'
-    }
-  ]
+  }
 };
 export default {
   data () {
