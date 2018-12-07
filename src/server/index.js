@@ -26,13 +26,14 @@ const callback = (resolve, reject) => {
 
 //所有customer里面的api方法
 export const customerApi = {
+  //提交formdata
   createCustomerData: params => {
     let body = new XFieldApi.Formdata.constructFromObject(params);
     return new Promise((resolve, reject) => {
       customerApiInstance.createCustomerData(body, callback(resolve, reject));
     });
   },
-
+  //提交拜访formdata
   createvisitationData: params => {
     let body = new XFieldApi.Formdata.constructFromObject(params);
     return new Promise((resolve, reject) => {
@@ -58,20 +59,21 @@ export const customerApi = {
       );
     });
   },
-
+  //编辑formdata后提交
   editCustomerData: (id, params) => {
     let body = new XFieldApi.Formdata.constructFromObject(params);
     return new Promise((resolve, reject) => {
       customerApiInstance.editCustomerData(id, body, callback(resolve, reject));
     });
   },
-
+  //通过id获取formdata
   getCustomer: id => {
     return new Promise((resolve, reject) => {
       customerApiInstance.getCustomer(id, callback(resolve, reject));
     });
   },
 
+  //获取售点
   /**
    * var opts = {
       'pageSize': 56, // Number | 显示条数
@@ -85,13 +87,13 @@ export const customerApi = {
       customerApiInstance.getCustomers(opts, callback(resolve, reject));
     });
   },
-
+  //获取拜访的schema
   getVisitationSchema: mode => {
     return new Promise((resolve, reject) => {
       customerApiInstance.getVisitationSchema(mode, callback(resolve, reject));
     });
   },
-
+  //获取custom schema
   getCustomerSchema: () => {
     return new Promise((resolve, reject) => {
       customerApiInstance.getCustomerSchema(callback(resolve, reject));
@@ -107,11 +109,13 @@ export const ddApi = {
       ddApiInstance.createMicroapp(body, callback(resolve, reject));
     });
   },
+  //获取钉钉激活认证信息
   dingConfig: url => {
     return new Promise((resolve, reject) => {
       ddApiInstance.dingConfig(url, callback(resolve, reject));
     });
   },
+  //登录
   dingGetuserinfo: params => {
     let body = new XFieldApi.DingSsoRequest.constructFromObject(params);
     return new Promise((resolve, reject) => {
@@ -122,18 +126,21 @@ export const ddApi = {
 
 //所有dform里面的api方法
 export const dformApi = {
+  //提交formdata
   createFormdata: params => {
     let body = new XFieldApi.Formdata.constructFromObject(params);
     return new Promise((resolve, reject) => {
       dformApiInstance.createFormdata(body, callback(resolve, reject));
     });
   },
+  //编辑formdata 然后提交
   editFormdata: (id, params) => {
     let body = new XFieldApi.Formdata.constructFromObject(params);
     return new Promise((resolve, reject) => {
       dformApiInstance.editFormdata(id, body, callback(resolve, reject));
     });
   },
+  //根据id获取schema
   getSchema: id => {
     return new Promise((resolve, reject) => {
       dformApiInstance.getSchema(id, callback(resolve, reject));
