@@ -167,7 +167,7 @@ export default {
             systemSchemaId:_this.systemSchemaId,
             systemSchemaVersion:_this.systemSchemaVersion,
             systemCreatorUserId:"210000",
-            formData:formdata
+            formdata:formdata
           };
           console.log(formdata);
         }

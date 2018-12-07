@@ -89,7 +89,6 @@ export default {
     getCustomerSchema(){
       let _this=this;
       customerApi.getCustomerSchema().then(data=>{
-        console.log('schema:',data);
         _this.customSchema=data.viewSchema;
         _this.isSchemaChanging=true;
       },error=>{
@@ -99,8 +98,10 @@ export default {
     getCustomerData(){
       let _this=this;
       customerApi.getCustomer({id:1}).then(data=>{
-        console.log('data:',data);
-        _this.customSchema.value=data.formData;
+        _this.customSchema.value=data.formdata;
+        _this.name=data.formdata.shoudianmingchen;
+        _this.address=data.formdata.xiangxidizhi;
+        _this.telphone=data.formdata.lianxidianhua;
       },error=>{
         tool.dealError(_this,error);
       })
